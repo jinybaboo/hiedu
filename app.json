@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "hiedu",
+    "slug": "hiedu",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "hiedu"
+}
