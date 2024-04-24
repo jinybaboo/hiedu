@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "432397623403",
+    "project_id": "hiedu-7b8e8",
+    "storage_bucket": "hiedu-7b8e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432397623403:android:1691122076fee24838912e",
+        "android_client_info": {
+          "package_name": "com.hiedu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAAD2QIgTTZ5y-OAAOzZT81CckUg-PfJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

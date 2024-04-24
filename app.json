@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "hiedu",
-    "slug": "hiedu",
+    "name": "하이에듀",
+    "slug": "HiEdu",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ]
   },
-  "name": "hiedu"
+  "name": "하이에듀",
+  "displayName": "하이에듀"
 }
