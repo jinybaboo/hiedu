@@ -39,12 +39,9 @@ const Tabs = () => {
         isSender = true;
     }
 
-
     const [hasNewBoard, setHasNewBoard] = useState(false);
 
     const isFocused = useIsFocused();
-
-    console.log(isLogin);
 
     if(!isLogin){
         goLoginAgree(navigation);
