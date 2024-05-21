@@ -5,6 +5,7 @@ pod 'FirebaseAuthInterop', :modular_headers => true
 pod 'FirebaseCore', :modular_headers => true
 pod 'FirebaseCoreExtension', :modular_headers => true
 
+pod 'react-native-version-check', :path => '../node_modules/react-native-version-check'
 
 
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")

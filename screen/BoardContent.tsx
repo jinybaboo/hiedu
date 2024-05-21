@@ -13,6 +13,7 @@ import { HeaderCustom } from "../components/HeaderCustom";
 import { Loader } from "../components/Loader";
 import { getAdminInfo, getBoardContent } from "../common/commonData";
 import { changeHttpUrlTxt, downloadFile, linkWeb } from "../common/commonExportFunc";
+import { ImageModal } from "../components/ImageModal";
 
 const os = Platform.OS;
 const windowWidth = getWindowWidth();
@@ -96,6 +97,14 @@ export const BoardContent = () =>{
         getData();
     },[]);
 
+    // 이미지 모달 세트
+    const [showModal, setShowModal] = useState(false);
+    const [modalImg, setModalImg] = useState<any>([]);
+    function showImageModal(url:string){
+        setModalImg([{url}]);
+        setShowModal(true);
+    }
+    
 
     if(isLoading){
         return <Loader />
@@ -134,11 +143,15 @@ export const BoardContent = () =>{
                     </AlarmConentBox>
 
                     
-                    {image_new!=null && <AlarmImageBox>
-                        <AutoHeightImage 
-                            width={windowWidth-40}
-                            source={{uri:image}}
-                        />
+                    {image_new!=null && 
+                    
+                    <AlarmImageBox>
+                        <Pressable onPress={()=>{showImageModal(image)}}>
+                            <AutoHeightImage 
+                                width={windowWidth-40}
+                                source={{uri:image}}
+                            />
+                        </Pressable>
                         <Space height={20}/>
                     </AlarmImageBox>}
 
@@ -173,6 +186,13 @@ export const BoardContent = () =>{
                 <Space height={30}/>
             </PaddingView>
             </ScrollView>
+
+            {showModal && 
+            <ImageModal 
+                setShowModal ={setShowModal}
+                modalImg ={modalImg}
+            />
+            }
         </SafeBasicView>
     )
 

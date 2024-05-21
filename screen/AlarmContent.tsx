@@ -14,6 +14,9 @@ import { AlarmContentBottom } from "../components/AlarmContentBottom";
 import { getAdminInfo, getAlarmContent } from "../common/commonData";
 import { Loader } from "../components/Loader";
 import { changeHttpUrlTxt } from "../common/commonExportFunc";
+import { ImageModal } from "../components/ImageModal";
+
+
 
 const os = Platform.OS;
 const windowWidth = getWindowWidth();
@@ -33,8 +36,8 @@ const ContentHeightView = styled.View`
     min-height: ${contentHeight}px;
 `
 
-export const AlarmContnet = () =>{
 
+export const AlarmContnet = () =>{
     const route = useRoute();				
     const { id, yyyymm}:any = route.params; 	
     const navigation:any = useNavigation();
@@ -59,13 +62,19 @@ export const AlarmContnet = () =>{
 
     },[]);
 
+    // 이미지 모달 세트
+    const [showModal, setShowModal] = useState(false);
+    const [modalImg, setModalImg] = useState<any>([]);
+    function showImageModal(url:string){
+        setModalImg([{url}]);
+        setShowModal(true);
+    }
 
 
     if(isLoading){return <Loader />}
 
     const images = data?.image_new?.split("^^");
     const message = changeHttpUrlTxt(data?.message);
-
 
     return (
         <SafeBasicView>
@@ -86,13 +95,14 @@ export const AlarmContnet = () =>{
                     <AlarmImageBox>
                     {images.map((item:any, idx:number)=>{
                         const uri = fileUrl+item;
-                        
                             return(
                                 <View key={idx+"img"}>
-                                    <AutoHeightImage 
-                                        width={windowWidth-40}
-                                        source={{uri:uri}}
-                                    />
+                                    <Pressable onPress={()=>{showImageModal(uri)}}>
+                                        <AutoHeightImage 
+                                            width={windowWidth-40}
+                                            source={{uri:uri}}
+                                        />
+                                    </Pressable>
                                     <Space height={20}/>
                                 </View>
                             )
@@ -111,6 +121,13 @@ export const AlarmContnet = () =>{
                 <Space height={30}/>
             </PaddingView>
             </ScrollView>
+
+            {showModal && 
+            <ImageModal 
+                setShowModal ={setShowModal}
+                modalImg ={modalImg}
+            />
+            }
         </SafeBasicView>
     )
 

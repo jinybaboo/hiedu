@@ -15,6 +15,7 @@ import { getAdminInfo, getAlarmContent } from "../common/commonData";
 import { useQuery } from "react-query";
 import { Loader } from "../components/Loader";
 import { changeHttpUrlTxt } from "../common/commonExportFunc";
+import { ImageModal } from "../components/ImageModal";
 
 const os = Platform.OS;
 const windowWidth = getWindowWidth();
@@ -60,6 +61,16 @@ export const HomeLetterContent = () =>{
 
     },[]);
 
+
+    // 이미지 모달 세트
+    const [showModal, setShowModal] = useState(false);
+    const [modalImg, setModalImg] = useState<any>([]);
+    function showImageModal(url:string){
+        setModalImg([{url}]);
+        setShowModal(true);
+    }
+
+
     
 
 
@@ -91,12 +102,14 @@ export const HomeLetterContent = () =>{
                         const uri = fileUrl+item;
                             return(
                                 <View key={idx+"img"}>
-                                    <AlarmImageBox>
-                                        <AutoHeightImage 
-                                            width={windowWidth-42}
-                                            source={{uri:uri}}
-                                        />
-                                    </AlarmImageBox>
+                                    <Pressable onPress={()=>{showImageModal(uri)}}>
+                                        <AlarmImageBox>
+                                            <AutoHeightImage 
+                                                width={windowWidth-42}
+                                                source={{uri:uri}}
+                                            />
+                                        </AlarmImageBox>
+                                    </Pressable>
                                 <Space height={20}/>
                                 </View>
                             )
@@ -115,6 +128,13 @@ export const HomeLetterContent = () =>{
                 <Space height={30}/>
             </PaddingView>
             </ScrollView>
+
+            {showModal && 
+            <ImageModal 
+                setShowModal ={setShowModal}
+                modalImg ={modalImg}
+            />
+            }
         </SafeBasicView>
     )
 
