@@ -30,11 +30,11 @@ export default function App() {
 
   return (
     <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <StatusBar style='dark' />
-      <AppInnerForRedux />
-    </QueryClientProvider>
-  </Provider>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style='dark' />
+        <AppInnerForRedux />
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
