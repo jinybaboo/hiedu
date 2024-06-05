@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { HeaderSpaceForAndroid, PaddingView, SafeBasicView, Space } from "../common/commonStyled";
 import colors from "../common/commonColors";
 import { UnReadBox } from "../components/UnReadBox";
-import { goAgreement, goPrivacy, goSendList, goSendMain, goUnreadAlarm } from "../common/commonNaviFunc";
+import { goAgreement, goCompanyInfo, goPrivacy, goSendList, goSendMain, goUnreadAlarm } from "../common/commonNaviFunc";
 import { getWindowHeight } from "../common/commonFunc";
 import { Entypo, Ionicons } from '@expo/vector-icons'; 
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
@@ -66,7 +66,8 @@ const AgreementTxt1 = styled.Text`
     font-family: 'noto500'; font-size: 16px; line-height:19px; color:#000; letter-spacing: -0.3px; 
 `
 const LogoutBox = styled.View`
-    width:100%; height:60px; justify-content: center; align-items: flex-end; margin-top: 50px;
+    width:100%; height:60px; justify-content: center; margin-top: 10px;
+    /* align-items: flex-end; */
 `
 const LogoutPress = styled.TouchableOpacity`
     padding:15px 5px; 
@@ -260,6 +261,18 @@ export const Mypage = () =>{
                         <AgreementTxt1> 개인정보 처리방침</AgreementTxt1>
                         <Entypo name="chevron-small-right" size={24} color="black" />
                     </AgreementPress>
+
+
+                    <Space height={15}/>
+                    <MyTitleTxt>회사소개</MyTitleTxt>
+                    <Space height={12}/>
+
+                    <AgreementPress onPress={()=>{goCompanyInfo(navigation)}}>
+                        <AgreementTxt1>학교기업 소개</AgreementTxt1>
+                        <Entypo name="chevron-small-right" size={24} color="black" />
+                    </AgreementPress>
+
+
 
                     <LogoutBox>
                         <LogoutPress onPress={()=>{logoutCheck(dispatch, navigation)}}><LogoutTxt>로그아웃</LogoutTxt></LogoutPress>

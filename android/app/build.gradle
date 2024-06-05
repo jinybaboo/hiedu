@@ -156,7 +156,10 @@ dependencies {
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
     def frescoVersion = rootProject.ext.frescoVersion
 
+    // firebase 추가
     implementation platform('com.google.firebase:firebase-bom:30.4.1')
+    // firebase 추가 끝
+
     implementation 'com.google.firebase:firebase-analytics'
 
 

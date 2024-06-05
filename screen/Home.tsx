@@ -63,6 +63,7 @@ const MainMenuTxt = styled.Text`
  width:99%; text-align:center; height:16px; font-family: 'noto400'; font-size: 13px; line-height: 16px; color:${colors.textBlack}; letter-spacing: -0.4px; margin-top: 3px;
 `
 
+
 export const Home = () =>{
     const dispatch = useAppDispatch();
     const navigation:any = useNavigation();
@@ -137,6 +138,7 @@ export const Home = () =>{
     return (
         <SafeBasicView>
             <HeaderSpaceForAndroid/>
+
             <BasicScrollView>
                 <PaddingView>
                     <HomeHeaderView>
@@ -192,7 +194,6 @@ export const Home = () =>{
                                 value={searchWord}
                             />
                         </SearchInputBox>
-
                     </SearchView>
 
                     <Space height={40}/>

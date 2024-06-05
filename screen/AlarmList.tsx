@@ -7,7 +7,7 @@ import { StudentSelectTop } from "../components/StudentSelectTop";
 import { StudentSelectBottom } from "../components/StudentSelectBottom";
 import { HeaderCustom } from "../components/HeaderCustom";
 import { UnreadComp } from "../components/UnreadComp";
-import { getAlarmList, getMypageInfo } from "../common/commonData";
+import { getAlarmList } from "../common/commonData";
 import { useQuery } from "react-query";
 import { Loader } from "../components/Loader";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
@@ -56,15 +56,19 @@ export const AlarmList = () =>{
     const [receiveList, setReceiveList] = useState<any>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    let user_id = useSelector((state:any)=>state.user.user_id);
 
     async function getData(){
-        const data = await getAlarmList('notice', 'all');
+        
+        
+        const data = await getAlarmList('notice', 'all', user_id);
         setListData(data);
 
         //상단 필터용 데이터 만들기
         const receiveListData = removeDuplicateJsonArrData(data, 'name');
+
         let reveiveListTemp = [{name:'전체', school_name:""}];
-        receiveListData.forEach(({name, school_name}:any)=>{ reveiveListTemp.push({name, school_name});});
+        receiveListData?.forEach(({name, school_name}:any)=>{ reveiveListTemp.push({name, school_name});});
         setReceiveList(reveiveListTemp);
 
         setIsLoading(false);
@@ -82,7 +86,6 @@ export const AlarmList = () =>{
         setSelectedStudent(name);
         setSelectedSchool(school_name);
         closeBottomModal();
-
         resetFilteredData(name, school_name);
     }
 
@@ -140,7 +143,7 @@ export const AlarmList = () =>{
 
 
 
-    const renderItem = ({item:data, index}:any) => {			
+    const renderItem = ({item:data, index}:any) => {		
         const sendDate = getAlarmFullDate(data?.send_date);							
         const insertDate = getAlarmFullDate(data?.insert_date);
         const yyyymm = insertDate.replace(".","").replace(" ","").substring(0,6);
@@ -148,19 +151,19 @@ export const AlarmList = () =>{
     
         return (
             <>
-            <AlarmBoxPress onPress={()=>{
-                prepareGoAlarm(id, yyyymm);
-                
-            }}>
-            <AlarmListHeader data={data} />
-                <Space height={12}/>
-                <Line color={colors.lightGrayLine}/>
+                <AlarmBoxPress onPress={()=>{
+                    prepareGoAlarm(id, yyyymm);
+                    
+                }}>
+                <AlarmListHeader data={data} />
+                    <Space height={12}/>
+                    <Line color={colors.lightGrayLine}/>
 
-                <AlarmTxt3 numberOfLines={1}>{subject}</AlarmTxt3>
-                <AlarmTxt4 numberOfLines={2}>{message}</AlarmTxt4>
-                <AlarmTxt5>{sendDate}</AlarmTxt5>
-            </AlarmBoxPress>
-            <Space height={25}/>
+                    <AlarmTxt3 numberOfLines={1}>{subject}</AlarmTxt3>
+                    <AlarmTxt4 numberOfLines={2}>{message}</AlarmTxt4>
+                    <AlarmTxt5>{sendDate}</AlarmTxt5>
+                </AlarmBoxPress>
+                <Space height={25}/>
             </>
         )
     };										
@@ -174,7 +177,7 @@ export const AlarmList = () =>{
             {dataLength<1?
             <UnreadComp text={'수신된 알림장이 없습니다.'}/>
             :
-            <PaddingView >
+            <PaddingView>
                 {receiveList.length > 2 &&
                     <StudentSelectTop 
                         openBottomModal={openBottomModal} 
@@ -187,7 +190,7 @@ export const AlarmList = () =>{
                 <AlarmFlatList 
                     data = {selectedStudent=='전체'?listData:listDataFiltered}
                     renderItem={renderItem}
-                    keyExtractor={(item:any, index:number) => index.toString()+""}
+                    keyExtractor={(item:any, index:number) => index.toString()+"_key"}
                     showsVerticalScrollIndicator={false}
                     onEndReached={endReached}
                     onEndReachedThreshold={0.8}
@@ -211,8 +214,6 @@ export const AlarmList = () =>{
             />
         }
         </>
-        
-
     )
 
 }

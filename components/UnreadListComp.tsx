@@ -40,7 +40,6 @@ export const UnreadListComp = ({item, index}:any)=>{
     
     const navigation:any = useNavigation();
     const {category, subject, school_name, send_date, insert_date, id, start_date, end_date, is_survey_answer} = item;
-    // console.log('send_date', send_date);
     
     const sendDate = getAlarmFullDate(send_date); 
     const insertDate = getAlarmFullDate(insert_date); 

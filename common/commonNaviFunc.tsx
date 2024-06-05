@@ -4,11 +4,12 @@ import userSlice from "../slices/user";
 
 export const goBack = (navigation:any) =>{navigation.goBack();}
 
+
 //탭 메뉴
 export const goHome             = (navigation:any) => {navigation.navigate('Tabs', { screen: '홈'}); }
 export const goSendMain         = (navigation:any) => {navigation.navigate('Tabs', { screen: '발송하기'}); }
 export const goBoardList        = (navigation:any) => {navigation.navigate('Tabs', { screen: '공지사항'}); }
-export const goMypage             = (navigation:any) => {navigation.navigate('Tabs', { screen: '마이페이지'}); }
+export const goMypage           = (navigation:any) => {navigation.navigate('Tabs', { screen: '마이페이지'}); }
 
 //스택 메뉴
 export const goNotification     = (navigation:any) => {navigation.navigate('Stack', {screen: 'Notification', params:{}});}
@@ -55,3 +56,6 @@ export const goSurveyList       = (navigation:any, dispatch:any) => {
     dispatch(userSlice.actions.setSelectedStudent('전체'));
     navigation.navigate('Stack', {screen: 'SurveyList', params:{}});
 }
+
+
+export const goCompanyInfo     = (navigation:any) => {navigation.navigate('Stack', {screen: 'CompanyInfo', params:{}});}

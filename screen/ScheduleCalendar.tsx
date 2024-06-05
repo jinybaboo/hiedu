@@ -49,10 +49,9 @@ export const ScheduleCalendar = () =>{
 
 
     const getData = async () => {
-
         let data = await getMypageInfo();
-        
         let myInfo = getMyInfoDataForBottomSelect(data);
+
         
         // 등록된 정보의 학교 코드 가져오기
         let schoolCodeArr = await getMySchoolCodeInfo(myInfo);
@@ -75,8 +74,10 @@ export const ScheduleCalendar = () =>{
         //급식은 학교 단위 이므로 중복된 학교 코드는 myInfo에서 제거
         myInfo = removeDuplicateJsonArrData(myInfo, 'school_name');
         setStudentList(myInfo);
+
         
         let dataTemp:any = [];
+
         for(let i =0; i<schoolCodeArr.length; i++){
             const {ATPT_OFCDC_SC_CODE, SD_SCHUL_CODE, SCHUL_NM, SCHUL_KND_SC_NM} = schoolCodeArr[i];
             const today = new Date();
@@ -181,7 +182,6 @@ export const ScheduleCalendar = () =>{
             const listDataFiltered = listData.filter((item:any)=> item.SCHUL_NM == school_name);
             prepareData(listDataFiltered);
         }
-        
         closeBottomModal();
     }
 

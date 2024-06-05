@@ -158,6 +158,10 @@ export const SurveyContent = () =>{
     }
 
     const onChangeCheckbox = (qtnIdx:number, ansIdx:number, isChecked:boolean, doubleAnsCount:number) => {
+        if(badge==='종료'){
+            Alert.alert('안내',`설문 기간이 완료 되었습니다.`);
+            return;
+        }
         setSurveyResponseArr((prevState:any) => {
             const updatedResponses = [...prevState]; 
             let currentIsCheckedArr = updatedResponses[qtnIdx]?.response;

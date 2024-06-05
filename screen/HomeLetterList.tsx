@@ -82,9 +82,10 @@ export const HomeLetterList = () =>{
     const [receiveList, setReceiveList] = useState<any>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fileUrl, setFileUrl ] = useState('');
+    let user_id = useSelector((state:any)=>state.user.user_id);
 
     async function getData(){
-        const data = await getAlarmList('letter', 'all');
+        const data = await getAlarmList('letter', 'all', user_id);
         setListData(data);
         
         const receiveListData = removeDuplicateJsonArrData(data, 'name');

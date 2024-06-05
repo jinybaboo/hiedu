@@ -959,7 +959,6 @@ export const SendWrite = () =>{
                     // setAddBookAddrFinal(addBookAddrFinal);
                     // const totalTempArr = [...tempAddBookArr, ...tempSimpleArr];
                     // prepareFinalTotalData(totalTempArr);
-                    // // console.log(tempSimpleArr)
 
                     // const appCount = checkAppMember(tempArr, appMemberPhone);
                     // setAppCount(appCount);
@@ -1131,6 +1130,10 @@ export const SendWrite = () =>{
         });
         setSimpleStuAndParent(updatedDataArr);   
     }
+
+    function changeMobileTypeGroup(typeNum:any){
+        
+    }
   
     function onChangeContent(text:string){
         setContent(text);
@@ -1189,6 +1192,8 @@ export const SendWrite = () =>{
         if (result.didCancel){
             return null;
         } 
+
+
         const {assets} = result;
         let finalSelectedImgArr:any = [...selectedImg, ...assets];
         
@@ -1764,7 +1769,6 @@ export const SendWrite = () =>{
 
                 {appCount+smsCount!=0 && 
                 <ReceiveCountView>
-                    
                         <ReceiveCountTxt1>전체 </ReceiveCountTxt1>
                         <ReceiveCountTxt2>{pageKor=='설문조사'?appCount:appCount+smsCount}</ReceiveCountTxt2>
                         <ReceiveCountTxt1>명 (APP </ReceiveCountTxt1>
@@ -1979,7 +1983,6 @@ export const SendWrite = () =>{
                 }
 
                 {isShowFileBtns && 
-                
                 <FileBtnView style={{top:fileBtnTop}}>
                     <Shadow		
                         style={{
@@ -2012,7 +2015,7 @@ export const SendWrite = () =>{
         </ScrollView>			
         </SafeBasicView>
 
-
+        
 
 
         
@@ -2061,7 +2064,7 @@ export const SendWrite = () =>{
         />
         }
 
-        {isShowSurveyStartModal &&  //설문지 질문 타입 선택 모달
+        {isShowSurveyStartModal &&  //설문지 질문 타입 선택 모달 (설문 1차 모달)
         <SendWriteBottom_SurveyStart 
             aniBoxPositionY={aniBoxPositionY}
             closeSurveyStartModal={closeSurveyStartModalFast}
@@ -2077,7 +2080,7 @@ export const SendWrite = () =>{
         }   
 
         
-        {isShowSurveyTypeModal &&  //객관식 주관식 타입 선택 모달
+        {isShowSurveyTypeModal &&  //객관식 주관식 타입 선택 모달 (설문 2차 모달)
         <SendWriteBottom_SurveyType 
             aniBoxPositionY={aniBoxPositionY}
             setQtypeData={setQtypeData}
@@ -2121,6 +2124,7 @@ export const SendWrite = () =>{
             onSubmitSurveyWrite={onSubmitSurveyWrite}
             surveyInputTxt={surveyInputTxt}
             setIsShowSurveyWriteInput={setIsShowSurveyWriteInput}
+            doubleAnsCount = {doubleAnsCount}
         />
         }
 
@@ -2171,10 +2175,10 @@ export const SendWrite = () =>{
                 selectedValue={selectedValue}
                 onValueChange={(itemValue) =>{
                     if(os=='ios'){
-                        setSelectedValue(itemValue)
+                        setSelectedValue(itemValue);
                     }else{
                         setSelectedValue(itemValue);
-                        selectSimpleData(itemValue)
+                        selectSimpleData(itemValue);
                     }
 
                 }}
@@ -2376,7 +2380,6 @@ export const SendWrite = () =>{
                                 typeTxt = item.groupName;
                             }
 
-
                             return(
                                 <ReceiveListBox key={'plist_'+idx}>
                                     <ReceiveListTxt1 numbersOfLine={1}>{typeTxt}</ReceiveListTxt1>
@@ -2391,10 +2394,8 @@ export const SendWrite = () =>{
                                 </ReceiveListBox>
                             )
                         })}
-                       
 
                     </Padding15> 
-
                 </AddBookScroll>
 
                 <Line color={colors.lightGrayLine}/>

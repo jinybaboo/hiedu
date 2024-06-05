@@ -306,9 +306,6 @@ export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookMod
                                         //교직원 프린트 끝 
                                         })}
 
-
-
-
                                     </View>
                                 )
                             })
@@ -362,7 +359,6 @@ export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookMod
                                             return(
                                                 <View key={'class_'+idx1}>
                                                     {id == group_id && isOpen =='y' && 
-                                                   
                                                     <SelectView_Lv2>
                                                         <SelectLeftPress2 onPress={()=>{toggleMobileSelect_group(address_id, phone_field)}}>
                                                             <TreeImg source={require('../assets/icons/treeSide.png')} style={{marginRight:3}}/>
@@ -376,10 +372,6 @@ export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookMod
                                             )
                                         //그룹 프린트 끝 
                                         })}
-
-
-
-
                                     </View>
                                 )
                             })

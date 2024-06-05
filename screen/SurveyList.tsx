@@ -77,10 +77,11 @@ export const SurveyList = () =>{
     const [listDataFiltered, setListDataFiltered] = useState([]);
     const [receiveList, setReceiveList] = useState<any>([]);
     const [isLoading, setIsLoading] = useState(true);
+    let user_id = useSelector((state:any)=>state.user.user_id);
 
 
     async function getData(){
-        const data = await getAlarmList('survey', 'all');
+        const data = await getAlarmList('survey', 'all', user_id);
         setListData(data);
         
         const receiveListData = removeDuplicateJsonArrData(data, 'name');
@@ -162,11 +163,12 @@ export const SurveyList = () =>{
     const dataLength = listData?.length;
 
     const renderItem = ({item:data, index}:any) => {	
+        
         const {id, subject, name, school_name,  insert_date, etc2, send_info, is_read, is_survey_answer, start_date, end_date} = data;
         const grade_class =  etc2!=null && `[${etc2?.split("^")[1]}-${etc2.split("^")[2]}]`
         const sendInfoGrade = send_info?.split("^")[0];
         const isTeacher = isNaN(sendInfoGrade)?"":"선생님";
-
+        
         const insertDate = getAlarmFullDate(insert_date);
         const yyyymm = insertDate.replace(".","").replace(" ","").substring(0,6);
 

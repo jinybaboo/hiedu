@@ -16,6 +16,7 @@ import { goBoardContent } from "../common/commonNaviFunc";
 import { CircleTxtBanner } from "../components/CircleTxtBanner";
 import { Entypo } from '@expo/vector-icons';
 import { useAppDispatch } from "../store";
+import { StatusBar } from "expo-status-bar";
 
 const HomeLetterFlatList = styled.FlatList`
     margin-bottom: 50px;
@@ -66,7 +67,7 @@ export const BoardList = () =>{
             reveiveListTemp.push({name, school_name});
         })
         setReceiveList(reveiveListTemp);
-
+        
         const schoolArr = data.reduce((returnArr:any, item:any) =>{								
             returnArr.push(item.schoolName)
             return returnArr;							

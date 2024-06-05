@@ -21,15 +21,15 @@ export const HeaderCustom = ({title, hideBack}:any)=>{
     const navigation:any = useNavigation();
     return (
         <>
-        <HeaderSpaceForAndroid />
-        <Header>
-            {!hideBack &&
-            <HeaderPress onPress={()=>{goBack(navigation)}}>
-                <Ionicons style={{marginTop:6}} name="chevron-back" size={28} color="#000000" />
-            </HeaderPress>
-            }
-            <HeaderTxt>{title}</HeaderTxt>
-        </Header>
+            <HeaderSpaceForAndroid />
+            <Header>
+                {!hideBack &&
+                <HeaderPress onPress={()=>{goBack(navigation)}}>
+                    <Ionicons style={{marginTop:6}} name="chevron-back" size={28} color="#000000" />
+                </HeaderPress>
+                }
+                <HeaderTxt>{title}</HeaderTxt>
+            </Header>
         </>
     )
 }

@@ -144,7 +144,6 @@ const RootNav = () => {
             screenOptions={{
                 headerShown:false,
                 animation:'slide_from_right',
-                //presentation:'modal',
             }}
         >
             <Nav.Screen name ="Tabs" component={Tabs} />

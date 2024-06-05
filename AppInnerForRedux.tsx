@@ -4,7 +4,7 @@ import RootNav from './navigation/RootNav';
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import { useAppDispatch } from './store';
-import { loginCheckAndSaveSendInfo } from './common/commonExportFunc';
+import { linkWeb, loginCheckAndSaveSendInfo } from './common/commonExportFunc';
 import { useSelector } from 'react-redux';
 import VersionCheck from 'react-native-version-check';
 import { Linking, Platform } from 'react-native';
@@ -17,6 +17,7 @@ import colors from './common/commonColors';
 const NativeStack = createNativeStackNavigator();
 const windowWidth = getWindowWidth();
 const windowHeight = getWindowHeight();
+const os = Platform.OS;
 
 const AlertView = styled.View`
     width: 100%; height:${windowHeight}px; background: rgba(0, 0, 0, 0.50); position: absolute; bottom:0; display: flex; align-items: center; justify-content:center; z-index: 9999;
@@ -43,6 +44,13 @@ const AlertBtnTxt2 = styled(AlertBtnTxt)`
     color:${colors.dateGray};
 `
 
+const KakaoBtn = styled.Pressable`
+    width: 40px; height: 40px; position: absolute; bottom:${os==='ios'?100:70}px; right:20px; 
+`
+const KakaoImg = styled.Image`
+    width: 40px; height:40px; border-radius: 50px;
+`
+
 let customFonts = {
     'noto100': require('./assets/fonts/NotoSansKR_100Thin.ttf'),
     'noto300': require('./assets/fonts/NotoSansKR_300Light.ttf'),
@@ -50,11 +58,12 @@ let customFonts = {
     'noto500': require('./assets/fonts/NotoSansKR_500Medium.ttf'),
     'noto700': require('./assets/fonts/NotoSansKR_700Bold.ttf'),
     'noto900': require('./assets/fonts/NotoSansKR_900Black.ttf'),
+    'tit300': require('./assets/fonts/TitilliumWeb-Light.ttf'),
+    'tit900': require('./assets/fonts/TitilliumWeb-Black.ttf'),
 };
 
 const AppInnerForRedux:any = () => {
     const dispatch = useAppDispatch();
-    const os = Platform.OS;
     
     const [isAppReady, setAppReady] = useState(false);
     const [showUpdate, setShowUpdate] = useState<any>(false);
@@ -63,7 +72,7 @@ const AppInnerForRedux:any = () => {
     async function compareVersion(){
         const storeVersion =  os === 'ios'?await VersionCheck.getLatestVersion({provider: 'appStore'}) : await VersionCheck.getLatestVersion({provider: 'playStore'});
         const currentVersion = VersionCheck.getCurrentVersion();
-        setShowUpdate(storeVersion!==currentVersion)
+        setShowUpdate(storeVersion!==currentVersion);
     }
 
     async function prepare(){
@@ -75,16 +84,14 @@ const AppInnerForRedux:any = () => {
     const phone = useSelector((state:any)=>state.user.phone);
     useEffect(()=>{
         compareVersion();
-       
         prepare();
-    },[])
+    },[]);
 
     function openPlayStore(){
         let url = os=='ios'?'https://apps.apple.com/us/app/%ED%95%98%EC%9D%B4%EC%97%90%EB%93%80/id6499091336':'market://details?id=com.hiedu';
         Linking.openURL(url);
     }
-     
-   
+    
    
     if(!isAppReady){return;}
 
@@ -112,6 +119,10 @@ const AppInnerForRedux:any = () => {
                 </AlertBox>
             </AlertView>
             }
+
+            <KakaoBtn onPress={()=>{linkWeb('http://pf.kakao.com/_nzxabxj/chat')}}>
+                <KakaoImg source={require('./assets/icons/kakao2.jpeg')}/>
+            </KakaoBtn>
         </NavigationContainer>
     )
 }

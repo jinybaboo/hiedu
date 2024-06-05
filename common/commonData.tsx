@@ -3,9 +3,9 @@ import axios from 'axios'
 import { getTodayAsYYYYMMDD } from './commonFunc';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-let serverUrl = `http://172.30.1.41:100`;
-// serverUrl = `http://192.168.0.27:100`;
-serverUrl = `https://app.hiedu.kr`; 
+let serverUrl = `http://172.30.1.89:100`;
+serverUrl = `http://192.168.0.33:100`;
+// serverUrl = `https://app.hiedu.kr`; 
 
 export const getLunchInfo = async (ATPT_OFCDC_SC_CODE:string, SD_SCHUL_CODE:string) => {  
     const today = getTodayAsYYYYMMDD();
@@ -62,6 +62,17 @@ export const getLoginTokens = async (phone:string) => {
   }
 };
 
+export const getIsPhoneExist = async (phone:string) => {
+  const url = `${serverUrl}/getData/getIsPhoneExist?phone=${phone}`;
+  try {
+    const {data} = await axios.get(url);
+    return data;
+  } catch (error) {
+    console.error('getIsPhoneExist', error);
+  }
+};
+
+
 export const getIsExistAndSaveIfExist = async (phone:string, fcmToken:any) => {
   const url = `${serverUrl}/getData/getIsExistAndSaveIfExist?phone=${phone}&fcmToken=${fcmToken}`;
   try {
@@ -113,9 +124,11 @@ export const getMypageInfo = async () => {
   }
 };
 
-export const getAlarmList = async (category:string, isAll:string) => {
+export const getAlarmList = async (category:string, isAll:string, user_id:string) => {
+  
   const accessToken =  await EncryptedStorage.getItem('accessToken');
-  const url = `${serverUrl}/getData/alarmList?category=${category}&isAll=${isAll}`;
+  //isAll = 'all' : 전체, '' : 읽지 않은 것만.
+  const url = `${serverUrl}/getData/alarmList?category=${category}&isAll=${isAll}&user_id=${user_id}`;
   try {
     const {data} = await axios.get(url, {headers:{'Authorization': `Bearer ${accessToken}`, }});
     return data;
@@ -150,7 +163,7 @@ export const getAlarmSearch = async (searchWord:string) => {
     const {data} = await axios.post(url, sendData, {headers:{'Authorization': `Bearer ${accessToken}`, }});
     return data;
   } catch (error) {
-    console.error('getAlarmList', error);
+    console.error('getAlarmSearch', error);
   }
 };
 
@@ -389,7 +402,7 @@ export const getUserInfoWithAccessToken = async () => {
     const {data} = await axios.get(url, {headers:{'Authorization': `Bearer ${accessToken}`, }});
     return data[0];
   } catch (error) {
-    console.error('getAlarmList', error);
+    console.error('getUserInfoWithAccessToken', error);
   }
 };
 
@@ -568,4 +581,16 @@ export const deleteUmslog = async (umslog_id:any) =>{
         console.error('deleteUmslog', error);
         return false;
     }
+}
+
+export const deleteAppMember = async () =>{
+  const accessToken =  await EncryptedStorage.getItem('accessToken');
+  const url = `${serverUrl}/postData/deleteAppMember`;
+  try {
+      await axios.post(url, {}, {headers:{'Authorization': `Bearer ${accessToken}` }},);
+      return true;
+  } catch (error) {
+      console.error('deleteAppMember', error);
+      return false;
+  }
 }

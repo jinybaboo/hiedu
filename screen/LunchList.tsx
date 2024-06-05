@@ -38,7 +38,7 @@ export const LunchList = () =>{
         //바틈 메뉴 데이터
         let data = await getMypageInfo();
         let myInfo = getMyInfoDataForBottomSelect(data);
-        
+
         // 등록된 정보의 학교 코드 가져오기
         let schoolCodeArr = await getMySchoolCodeInfo(myInfo)
         
@@ -60,12 +60,11 @@ export const LunchList = () =>{
         //급식은 학교 단위 이므로 중복된 학교 코드는 myInfo에서 제거
         myInfo = removeDuplicateJsonArrData(myInfo, 'school_name');
         setStudentList(myInfo);
-    
+        
         let dataTemp:any = [];
         for(let i =0; i<schoolCodeArr.length; i++){
             const {ATPT_OFCDC_SC_CODE, SD_SCHUL_CODE, SCHUL_NM, SCHUL_KND_SC_NM} = schoolCodeArr[i];
             data = await getLunchInfo(ATPT_OFCDC_SC_CODE, SD_SCHUL_CODE);
-            // data = await getLunchInfo('B10', '7011169');
             if(data?.mealServiceDietInfo!= undefined){
                 let lunchArr = data?.mealServiceDietInfo[1]?.row;
                 dataTemp = [...dataTemp, ...lunchArr];

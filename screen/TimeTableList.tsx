@@ -51,6 +51,7 @@ export const TimeTableList = () =>{
                 const {school_name, category1, category2}:any = studentList[j];
                     if(SCHUL_NM==school_name && category1>=1 && category2>=1){
                         const data = await getTimeTableInfo(SCHUL_KND_SC_NM, ATPT_OFCDC_SC_CODE, SD_SCHUL_CODE,category1, category2, startDate, endDate, endDate2);
+                        
                         if(data?.RESULT?.code == undefined){
                             let arr:any = [];
                             if(SCHUL_KND_SC_NM==='중학교'){
@@ -74,9 +75,11 @@ export const TimeTableList = () =>{
         let data = await getMypageInfo();
         let myInfo = getMyInfoDataForBottomSelect(data);
 
+
          // 등록된 정보의 학교 코드 가져오기
         let schoolCodeArr = await getMySchoolCodeInfo(myInfo);
         setSchoolCodeArr(schoolCodeArr);
+
 
         //등록된 학교 코드가 없으면 수신 myInfo 에서 제거
         myInfo = myInfo.filter((item:any)=>{
@@ -92,6 +95,7 @@ export const TimeTableList = () =>{
             }
             return hasSchool;
         });
+
 
         //학생이 아닌데 category가 숫자가 아니면(담임이 아님) myInfo에서 제거
         myInfo = myInfo.filter((item:any)=>{
@@ -119,15 +123,13 @@ export const TimeTableList = () =>{
             // return null;
         }
 
-
-
-
         setStudentList(myInfo);
 
         const today = getTodayAsYYYYMMDD(); 
         const fiveDayLater = getDaysBeforeAsYYYYMMDD(-2);
         const twoMonLater = getMonthsLaterAsYYYYMMDD(2)
         const dataTemp = await getTimetableRawData(schoolCodeArr, myInfo, today, twoMonLater, fiveDayLater);
+        
 
         const timeTableData:any = fixTimeTableData(dataTemp);
         

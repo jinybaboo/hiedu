@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { getAlarmList } from "../common/commonData";
 import { DeviceEventEmitter } from "react-native";
 import { Loader } from "../components/Loader";
+import { useSelector } from "react-redux";
 
 
 
@@ -19,6 +20,7 @@ const UnreadFlatList = styled.FlatList`
 export const UnreadAlarm = () =>{
 
     const isFocused = useIsFocused();
+    let user_id = useSelector((state:any)=>state.user.user_id);
 
     const route = useRoute();				
     const { boardType }:any = route.params; 	
@@ -36,7 +38,7 @@ export const UnreadAlarm = () =>{
     const [isLoading, setIsLoading] = useState(true);
 
     async function getData(){
-        const data = await getAlarmList(boardNameEng, 'unread');
+        const data = await getAlarmList(boardNameEng, 'unread', user_id);
         
         setListData(data);
         setIsLoading(false);

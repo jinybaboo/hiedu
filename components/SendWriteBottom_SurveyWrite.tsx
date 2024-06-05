@@ -59,9 +59,8 @@ const SurveyInputClosePress = styled.Pressable`
 
 export const SendWriteBottom_SurveyWrite = ({aniBoxPositionY, closeSurveyWriteModal, surveyArr, qType, isDoubleAnswer, currentWriteSurveyObj, writeSurveyInput, 
     currentWriteSurveyAnsArr, setCurrentWriteSurveyAnsArr, finishWriteSurveyQtn, isShowSurveyWriteInput, writeSurveyInputType, surveyWriteInputRef,
-    onChangeSurveyWrite, onSubmitSurveyWrite, surveyInputTxt, setIsShowSurveyWriteInput}:any)=>{
-
-
+    onChangeSurveyWrite, onSubmitSurveyWrite, surveyInputTxt, setIsShowSurveyWriteInput, doubleAnsCount}:any)=>{
+    
     function removeAnswer(idx:number){
         const newAnswerArr = [...currentWriteSurveyAnsArr];
         newAnswerArr.splice(idx, 1);
@@ -72,6 +71,8 @@ export const SendWriteBottom_SurveyWrite = ({aniBoxPositionY, closeSurveyWriteMo
         const newAnswerArr = [...currentWriteSurveyAnsArr, ...['']];
         setCurrentWriteSurveyAnsArr(newAnswerArr);
     }
+
+    const doubleAnswerCount = isDoubleAnswer==='중복답변 가능'? `중복답변 ${doubleAnsCount}개 가능`:isDoubleAnswer;
 
 
     return (
@@ -85,7 +86,7 @@ export const SendWriteBottom_SurveyWrite = ({aniBoxPositionY, closeSurveyWriteMo
                         {qType=='주관식'?
                         <BottomSelTxt1_1>{qType}</BottomSelTxt1_1>
                         :
-                        <BottomSelTxt1_1>{qType}, {isDoubleAnswer}</BottomSelTxt1_1>
+                        <BottomSelTxt1_1>{qType}, {doubleAnswerCount}</BottomSelTxt1_1>
                         }
                     </BottomSelTxt1View>
                     
@@ -142,7 +143,6 @@ export const SendWriteBottom_SurveyWrite = ({aniBoxPositionY, closeSurveyWriteMo
                             )})
                         }
 
-
                     </QueView>
 
                     <Space height={10}/>
@@ -152,8 +152,6 @@ export const SendWriteBottom_SurveyWrite = ({aniBoxPositionY, closeSurveyWriteMo
                     <Space height={20}/>
                     </>
                     }
-
-
                     
                 </SurveyScrollView>
 

@@ -10,9 +10,6 @@ const os = Platform.OS;
 
 export const SendWriteBottom_SurveyDoubleAnswer = ({aniBoxPositionY, setIsDoubleAnswerData, isDoubleAnswer}:any)=>{
 
-    
-
-
 
     return (
         <ModalBackground>

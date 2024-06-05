@@ -1,10 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Ionicons } from '@expo/vector-icons'; 
-import colors from "../common/commonColors";
-import { Notification } from "../screen/Notification";
-import { goBack } from "../common/commonNaviFunc";
+import { useNavigation } from "@react-navigation/native";
 import { LoginAgree } from "../screen/LoginAgree";
 import { LoginAgree2} from "../screen/LoginAgree2";
 import { Agreement } from "../screen/Agreement";
@@ -27,6 +23,7 @@ import { BoardContent } from "../screen/BoardContent";
 import { SendWrite } from "../screen/SendWrite";
 import { SendList } from "../screen/SendList";
 import { SendListContent } from "../screen/SendListContent";
+import { CompanyInfo } from "../screen/CompanyInfo";
 
 
 
@@ -269,7 +266,16 @@ const Stack = () =>{
                     presentation:'card',
                 }}
             />
-            
+
+            <NativeStack.Screen 
+                name="CompanyInfo"
+                component={CompanyInfo}
+                options={{
+                    headerShown:false,
+                    animation:'slide_from_right',
+                    presentation:'card',
+                }}
+            />
 
 
 

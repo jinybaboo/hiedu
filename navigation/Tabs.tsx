@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs"
 
-import {Ionicons, Feather, AntDesign, Octicons, FontAwesome5, Fontisto} from '@expo/vector-icons';
+import {Ionicons, AntDesign} from '@expo/vector-icons';
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducer";
@@ -11,10 +11,9 @@ import { Mypage } from "../screen/Mypage";
 import { Platform } from "react-native";
 import { goLoginAgree } from "../common/commonNaviFunc";
 import styled from "styled-components/native";
-import { CircleTxtBanner } from "../components/CircleTxtBanner";
 import { useEffect, useState } from "react";
 import { getAuth, getBoardList, getMypageInfo } from "../common/commonData";
-import { getBoardNew, removeDuplicateJsonArrData } from "../common/commonFunc";
+import { getBoardNew } from "../common/commonFunc";
 import { SendMain } from "../screen/SendMain";
 import { useAppDispatch } from "../store";
 import userSlice from "../slices/user";
@@ -25,11 +24,15 @@ const Tabs = () => {
     const os = Platform.OS;
     const iconSize = 24;
     const tapBarFontSize = os==='ios'?10:9;
+
+    const dispatch = useAppDispatch();
+
   
     const isLogin = useSelector((state:RootState)=>state.user.isLogin);
     const member_id = useSelector((state:any)=>state.user.member_id);
     const isUser = useSelector((state:RootState)=>state.user.isUser);
     const auth:any = useSelector((state:RootState)=>state.user.auth);
+
 
     let isSender = false;
     if(isUser>0){
@@ -71,7 +74,7 @@ const Tabs = () => {
 
 
     // 탭 네비게이션 시 auth 재설정 하기 
-    const dispatch = useAppDispatch();
+    
     async function setAuthData(){
         const {auth} = await getAuth(isUser, member_id);
         dispatch(userSlice.actions.setAuth(auth));
@@ -94,26 +97,26 @@ const Tabs = () => {
 
     return(
         <Tab.Navigator 
-        initialRouteName="Home" 
+            initialRouteName="Home" 
 
-        screenOptions={{
-            tabBarShowLabel:true,
-            tabBarLabelPosition:"below-icon",
-            headerShown : false, //헤더 보여줄지 말지
-            tabBarStyle:{
-                paddingTop:5,
-            },
-            tabBarLabelStyle:{
-                fontSize:tapBarFontSize,
-                paddingBottom:3,
-                // paddingTop:3,
-            },
+            screenOptions={{
+                tabBarShowLabel:true,
+                tabBarLabelPosition:"below-icon",
+                headerShown : false, //헤더 보여줄지 말지
+                tabBarStyle:{
+                    paddingTop:5,
+                },
+                tabBarLabelStyle:{
+                    fontSize:tapBarFontSize,
+                    paddingBottom:3,
+                    // paddingTop:3,
+                },
 
-            tabBarHideOnKeyboard: true, //안드로이드 키보드 입력시 탭바 올리기
-            //페이지 전환시 마다 데이터를 다시 호출함!!!
-            //unmountOnBlur:true,
-            //tabBarActiveTintColor:"red",
-        }}>
+                tabBarHideOnKeyboard: true, //안드로이드 키보드 입력시 탭바 올리기
+                //페이지 전환시 마다 데이터를 다시 호출함!!!
+                //unmountOnBlur:true,
+                //tabBarActiveTintColor:"red",
+            }}>
             <Tab.Screen 
                 name="홈" 
                 component={Home} 

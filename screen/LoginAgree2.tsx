@@ -9,7 +9,7 @@ import { goHome, goLoginAgree } from "../common/commonNaviFunc";
 import { useNavigation } from "@react-navigation/native";
 import { HeaderCustom } from "../components/HeaderCustom";
 import { useAppDispatch } from "../store";
-import { getIsExistAndSaveIfExist, getLoginTokens, getMypageInfo, sendSMS_Random6 } from "../common/commonData";
+import { getIsExistAndSaveIfExist, getIsPhoneExist, getLoginTokens, getMypageInfo, sendSMS_Random6 } from "../common/commonData";
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { loginCheckAndSaveSendInfo } from "../common/commonExportFunc";
 import messaging from '@react-native-firebase/messaging';
@@ -152,12 +152,17 @@ export const LoginAgree2 = () =>{
                 goHome(navigation);
             }else{
                 //모달 보여주고 애니메이션 띄우기
-                setIsShowModal(true);
-                setTimeout(()=>{
-                    openBottomModal()
-                },200)
+                openLoginReject();
             }
         }
+    }
+
+
+    function openLoginReject(){
+        setIsShowModal(true);
+        setTimeout(()=>{
+            openBottomModal()
+        },200)
     }
 
     
@@ -214,6 +219,15 @@ export const LoginAgree2 = () =>{
 
         Keyboard.dismiss();
         inActivePhoneSend();
+
+
+        //DB에 전화번호 없을시 인증문자 발송 거절
+        const isNumExistInDB = await getIsPhoneExist(phone);
+        if(!isNumExistInDB){
+            openLoginReject();
+            return;
+        }
+
 
         const randomNum = phone==='01012340000'?'000000': getRandomNum6();
         setSerialSent(randomNum)

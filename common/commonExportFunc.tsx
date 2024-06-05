@@ -1,6 +1,6 @@
 import { Alert, Animated, Linking, Text } from "react-native";
 import userSlice from "../slices/user";
-import { getAdminInfo, getAuth, getIsAccessTokenValid, getSendAuthInfo, getUserInfoWithAccessToken } from "./commonData";
+import { deleteAppMember, getAdminInfo, getAuth, getIsAccessTokenValid, getSendAuthInfo, getUserInfoWithAccessToken } from "./commonData";
 import { changeYYYYMMDDToYYYY_MM_DD, countJsonArrKeyValue, isObjectInArray } from "./commonFunc";
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { goHome } from "./commonNaviFunc";
@@ -13,12 +13,12 @@ export const fixTimeTableData = (arr:any) =>{
     let finalReturnArr:any = [];
     arr.forEach((saperateArr:any)=>{
         const tempArr:any = [];
+
         const dateArr = saperateArr.reduce((returnArr:any, item:any) =>{		
             if( !tempArr.includes(item.ALL_TI_YMD)){returnArr.push(item.ALL_TI_YMD)}	
             tempArr.push(item.ALL_TI_YMD);												
             return returnArr;												
         },[]);	
-
 
         const dataByDateArr = dateArr.map((item:any, idx:any)=>{
             const tempArr2 = saperateArr.filter((value:any)=>{
@@ -82,6 +82,8 @@ export const logoutCheck = (dispatch:any, navigation:any) =>{
 
 export const goLogout = async (dispatch:any, navigation:any) => {
     Alert.alert( '', '로그아웃 되었습니다.',  [{text: '확인', onPress: async () => {
+        await deleteAppMember();
+        
         await EncryptedStorage.removeItem('accessToken');
         dispatch(userSlice.actions.setIsLogin(false));
         goHome(navigation);

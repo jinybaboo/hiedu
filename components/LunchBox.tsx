@@ -143,7 +143,6 @@ export const LunchBox = ({item}:any)=>{
                         <OrignTxt1>원산지 정보</OrignTxt1>
                         <OrignTxt2>{originInfo}</OrignTxt2>
                     </OrignBox>
-                    
                 </LunchView>	
             </Shadow>
         </ListView>
