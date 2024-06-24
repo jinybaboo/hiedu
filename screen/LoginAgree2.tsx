@@ -301,6 +301,7 @@ export const LoginAgree2 = () =>{
             <GrayInputBox style={{paddingRight:5}}>
                 <PhoneInput 
                     keyboardType="numeric"
+                    // keyboardType="numbers-and-punctuation"
                     returnKeyType="done"
                     placeholder="'-'없이 숫자만 입력"
                     placeholderTextColor={colors.placeholder}
@@ -327,7 +328,9 @@ export const LoginAgree2 = () =>{
             <Space height={15}/>
             <SerialInputBox>
                 <SerialInput 
+                    // keyboardType="name-phone-pad"
                     keyboardType="numeric"
+                    returnKeyType="done"
                     placeholder=""
                     placeholderTextColor={colors.placeholder}
                     ref = {serialInputRef}

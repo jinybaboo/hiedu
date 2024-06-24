@@ -125,12 +125,9 @@ export const Mypage = () =>{
 
     useEffect(()=>{
         getData();
-    },[]);
-
-    useEffect(()=>{
         loadUnreadData();
+    },[isFocused]);
 
-    },[isFocused])
 
 
     if(isLoading){
@@ -203,10 +200,10 @@ export const Mypage = () =>{
                         let text2 = name;
                         let text3 = "";
                         if(memberType=='student'){
-                            text3 = `${category1}학년 ${category2}반`
+                            text3 = `${category1}학년 ${category2}반 학생`
                         }
                         if(memberType =='parent'){
-                            text3 = `${category1}학년 ${category2}반`
+                            text3 = `${category1}학년 ${category2}반 학부모`
                         }
                         if(memberType=='member'){
                             text3 ='교직원';
