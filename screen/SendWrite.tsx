@@ -1657,7 +1657,7 @@ export const SendWrite = () =>{
             finalSendData(sendData, formData);
         }else{
             Alert.alert( //alert 사용								
-                '안내', '문자는 건당 추가 요금이 발생할 수 있습니다.', [ 							
+                '안내', '앱에 미가입된 회원은 SMS로 발신하며, SMS 발송 문자 건수에 대하여 별도의 요금이 발생합니다. \n\n발송 하시겠습니까?', [ 							
                     {text: '취소', onPress: () => {}}, 						
                     {text: '확인', onPress: async () => {
                         finalSendData(sendData, formData);
