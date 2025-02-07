@@ -308,3 +308,12 @@ export function changeAlarmToRead(arr:any, id:any){
     })
     return tempArr;
 }
+
+
+export function sortJsonArrayByKey(jsonArray:any, key:string) {
+    return jsonArray.sort((a:any, b:any) => {
+        if (a[key] < b[key]) return -1;
+        if (a[key] > b[key]) return 1;
+        return 0;
+    });
+}

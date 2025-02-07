@@ -50,7 +50,7 @@ export const Setting = () =>{
         const {isPushOn} = await getMyMemberInfo();
         setIsPushOn(isPushOn==1);
         if(isPushOn==0){
-            Alert.alert( //alert 사용							
+            Alert.alert(					
                 '안내', 'PUSH 알람 수신이 꺼져있습니다.\n 알람을 켜시겠습니까?', [ //alert창 문구 작성						
                     {text: '취소', onPress: () => {}}, //alert 버튼 작성					
                     {text: '확인', onPress: async () => {

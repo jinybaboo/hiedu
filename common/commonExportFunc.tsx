@@ -410,22 +410,66 @@ export function printSimpleAddrTeacher(dataArr:any, hasAuth:boolean){
 }
 
 export function printSimpleAddrGroup(dataArr:any, hasAuth:boolean){
+    const groupNames = dataArr.map((item:any) => item.groupName); // groupName 값 추출
+    const uniqueGroupNames = [...new Set(groupNames)]; // Set을 이용해 중복 제거
+
     let returnArr:any = [{value:'none',txt:'간편추가 선택',count:''}];
-    dataArr.forEach((item:any)=>{
-        const {name, count, id} = item;
-        let value:any = {type:'group', cateName:name, id};
-        value = JSON.stringify(value);
-        returnArr.push({value, txt:name, count});
-    });
+
+    uniqueGroupNames.forEach((item)=>{
+        let mobile1Count = 0;
+        let mobile2Count = 0;
+        let mobile3Count = 0;
+        let idFinal = '';
+        dataArr.forEach((data:any)=>{
+            const {groupName, mobile1, mobile2, mobile3, id} = data;
+            if(item == groupName){
+                idFinal = id;
+                if(mobile1 != '' && mobile1 != undefined && mobile1 !='undefined' && mobile1 != null){
+                    mobile1Count++;
+                }
+                if(mobile2 != '' && mobile2 != undefined && mobile2 !='undefined' && mobile2 != null){
+                    mobile2Count++;
+                }
+                if(mobile3 != '' && mobile3 != undefined && mobile3 !='undefined' && mobile3 != null){
+                    mobile3Count++;
+                }
+            }
+        });
+        
+
+        if(mobile1Count !=0){
+            let value:any = {type:'group', cateName:item, id:idFinal, mobileType:'mobile1'};
+            value = JSON.stringify(value);
+            returnArr.push({value, txt:item, count:mobile1Count, mobileType:'mobile1'});
+        }
+        if(mobile2Count !=0){
+            let value:any = {type:'group', cateName:item, id:idFinal, mobileType:'mobile2'};
+            value = JSON.stringify(value);
+            returnArr.push({value, txt:item, count:mobile2Count, mobileType:'mobile2'});
+        }
+        if(mobile3Count !=0){
+            let value:any = {type:'group', cateName:item, id:idFinal, mobileType:'mobile3'};
+            value = JSON.stringify(value);
+            returnArr.push({value, txt:item, count:mobile3Count, mobileType:'mobile3'});
+        }
+    })
+    
+    // dataArr.forEach((item:any)=>{
+    //     const {name, count, id} = item;
+    //     let value:any = {type:'group', cateName:name, id};
+    //     value = JSON.stringify(value);
+    //     returnArr.push({value, txt:name, count});
+    // });
 
     if(!hasAuth){ returnArr = [{"count":"", "txt":"조회 권한이 없습니다.", "value":"none"}];}
-
     return returnArr;
 }
 
+
 export function addSimpleAddr(selectedArr:any, simpleStuAndPar:any, simpleTeacher:any, simpleGroup:any){
+    
     let simpleDataArr:any = [];
-    selectedArr.forEach(({type, level, category1, category2, cateName, id}:any)=>{
+    selectedArr.forEach(({type, level, category1, category2, cateName, id, mobileType}:any)=>{
         // 1. 학생 및 부모 간편추가 처리
         if(type==='student' || type==='parent1' || type==='parent2' ){
             const tempArr = getStudentParentDataWithSimpleInfo(simpleStuAndPar, type, level, category1, category2, '간편추가');
@@ -437,10 +481,11 @@ export function addSimpleAddr(selectedArr:any, simpleStuAndPar:any, simpleTeache
         }
         // 3. 그룹 간편추가 처리			
         else if(type==='group'){
-            const tempArr = getGroupDataWithSimpleInfo(simpleGroup, type, id, '간편추가');
+            const tempArr = getGroupDataWithSimpleInfo(simpleGroup, type, id, mobileType, '간편추가');
             simpleDataArr = [...simpleDataArr, ...tempArr];
         }
     });
+
     return simpleDataArr;
 }
 
@@ -571,7 +616,7 @@ const getTeacherDataWithSimpleInfo = (arr:any, cateName:any, type:any, level:any
 	return returnArr;
 }
 
-const getGroupDataWithSimpleInfo = (arr:any, type:any, groupId:any, addType:any) =>{
+const getGroupDataWithSimpleInfo = (arr:any, type:any, groupId:any, mobileType:any, addType:any) =>{
 	const returnArr:any = [];
 	arr.forEach((item:any)=>{
 		let tempObj:any = {};
@@ -582,27 +627,27 @@ const getGroupDataWithSimpleInfo = (arr:any, type:any, groupId:any, addType:any)
         tempObj.isSelected = item.isSelected;
         tempObj.name = item.name;
         tempObj.user_id = item.user_id;
-
+        tempObj.mobileType = mobileType;
 		
-		const {group_id, phone_field} = item;
+		const {group_id, phone_field, mobile1, mobile2, mobile3} = item;
+        
 		if(group_id == groupId){
-			if(phone_field=='mobile1'){
-				tempObj.mobile = item.mobile1;
-				tempObj.mobileType = 'mobile1';
+			if(mobileType=='mobile1' && mobile1 != '' && mobile1 != undefined && mobile1 !='undefined' && mobile1 != null){
+				tempObj.mobile = mobile1;
+                returnArr.push(tempObj);
 			}
-			if(phone_field=='mobile2'){
-				tempObj.mobile = item.mobile2;
-				tempObj.mobileType = 'mobile2';
+			if(mobileType=='mobile2' && mobile2 != '' && mobile2 != undefined && mobile2 !='undefined' && mobile2 != null){
+				tempObj.mobile = mobile2;
+                returnArr.push(tempObj);
 			}
-			if(phone_field=='mobile3'){
-				tempObj.mobile = item.mobile3;
-				tempObj.mobileType = 'mobile3';
+			if(mobileType=='mobile3' && mobile3 != '' && mobile3 != undefined && mobile3 !='undefined' && mobile3 != null){
+				tempObj.mobile = mobile3;
+                returnArr.push(tempObj);
 			}
-			if(phone_field=='tel'){
-				tempObj.mobile = item.tel;
-				tempObj.mobileType = 'tel';
-			}
-			returnArr.push(tempObj);
+			// if(phone_field=='tel'){
+			// 	tempObj.mobile = item.tel;
+			// 	tempObj.mobileType = 'tel';
+			// }
 		}
 	});
 	return returnArr;
@@ -623,6 +668,117 @@ export const checkAppMember = (totalSendInfoArr:any, appMemberPhone:any) =>{
     return appCount;
 }
 
+export function getDirectPhoneSendAddrInfo(directPhoneNumber:string, simpleStuAndPar:any, simpleTeacher:any, simpleGroup:any){
+    const returnArr:any = [];
+
+    let isAdded = false;
+
+    for (let item of simpleStuAndPar) {
+        let tempObj:any = {};
+		const {mobile1, mobile2, mobile3} = item;
+
+        tempObj.addType = '직접입력';
+        tempObj.kind = 's';
+        tempObj.name = item.name;
+        tempObj.user_id = item.user_id;
+        tempObj.category1 = item.category1;
+        tempObj.category2 = item.category2;
+        tempObj.category3 = item.category3;
+        tempObj.category4 == undefined?'':item.category4;
+        
+        if(mobile1 == directPhoneNumber){
+            tempObj.mobileType = 'mobile1';
+            tempObj.type = 'student';
+            tempObj.mobile = item.mobile1;
+            returnArr.push(tempObj);
+            isAdded = true;
+            return returnArr;
+        }else if(mobile2 == directPhoneNumber){
+            tempObj.mobileType = 'mobile2';
+            tempObj.type = 'parent1';
+            tempObj.mobile = item.mobile2;
+            isAdded = true;
+            returnArr.push(tempObj);
+            return returnArr;
+        }else if(mobile3 == directPhoneNumber){
+            tempObj.mobileType = 'mobile3';
+            tempObj.type = 'parent2';
+            tempObj.mobile = item.mobile3;
+            isAdded = true;
+            returnArr.push(tempObj);
+            return returnArr;
+        }
+    }
+
+    //선생님인지 확인
+    if(!isAdded){
+        for (let item of simpleTeacher) {
+            let tempObj:any = {};
+            const {mobile1} = item;
+    
+            if(mobile1 == directPhoneNumber){
+                tempObj.addType = '직접입력';
+                tempObj.kind = 't';
+                tempObj.name = item.name;
+                tempObj.user_id = item.user_id;
+                tempObj.category1 = item.category1;
+                tempObj.category2 = item.category2;
+                tempObj.category3 = item.category3;
+                tempObj.category4 == undefined?'':item.category4;
+
+                tempObj.mobileType = 'mobile1';
+                tempObj.type = 'teacher';
+                tempObj.mobile = item.mobile1;
+                returnArr.push(tempObj);
+                isAdded = true;
+                return returnArr;
+            }
+        }
+    }
+
+
+    //그룹인지 확인은 안해도 됨!
+    // if(!isAdded){
+    //     for (let item of simpleGroup) {
+    //         let tempObj:any = {};
+    //         const {mobile1, mobile2, mobile3} = item;
+            
+    //     }
+    // }
+
+
+
+    // 하나도 안걸리면, 멤버가 아닌 일반 번호 입력됨.
+    if(!isAdded){
+        let tempObj:any = {};
+        tempObj.addType = '직접입력';
+        tempObj.kind = '직접입력';
+        tempObj.name = '직접입력';
+        tempObj.user_id = '직접입력';;
+        tempObj.category1 = '직접입력';
+        tempObj.category2 = '직접입력';
+        tempObj.category3 = '직접입력';
+        tempObj.category4 = '직접입력';
+
+        tempObj.mobileType = '직접입력';
+        tempObj.type = '직접입력';
+        tempObj.mobile = directPhoneNumber;
+        returnArr.push(tempObj);
+        isAdded = true;
+        return returnArr;
+    }
+        
+}
+
+    
+		
+
+export const isDirectPhoneAppMember = (directPhoneNumber:string, appMemberPhone:any) => {
+    const mobile = directPhoneNumber.replace("-","").replace("-","");
+    const appMemberPhoneArr = appMemberPhone.map((item:any)=>item?.phone);
+    const isApp = appMemberPhoneArr.includes(mobile);
+    return isApp;
+}
 
 
 export function getUpdatedDataArr_ToggleGrade(gradeArr:any, classArr:any, category1:string){
@@ -738,8 +894,19 @@ export function getUpdatedDataArr_ToggleGroup(simpleGroupSelect:any, simpleGroup
     return {updatedSimpleGroupSelect, updatedDataArr};
 }
 
-
-
+export function getUpdatedDataArr_ToggleGroupLv2(simpleGroupSelect:any, simpleGroup:any, address_id:string){
+    const updatedDataArr:any = simpleGroup.map((item:any) => {
+        if(item.address_id === address_id) {
+            return {
+                ...item,
+                showLv2: item.showLv2 === 'y' ? 'n' : 'y'
+            };
+        }
+        return item;
+    });
+    
+    return {updatedDataArr};
+}
 
 
 export function getUpdatedDataArr_GradeSelect(gradeArr:any, classArr:any, simpleStuAndPar:any, category1:string, selPhoneType:any){
@@ -998,7 +1165,7 @@ export function getUpdatedDataArr_TeacherCate1Select(teacherCateArr:any, simpleT
     return {updatedTeacherCateArr, updatedDataArr};
 }
 
-export function getUpdatedDataArr_GroupSelect(simpleGroupSelect:any, simpleGroup:any, id:string){
+export function getUpdatedDataArr_GroupSelect(simpleGroupSelect:any, simpleGroup:any, id:string, selGroupPhoneType:any){
     let level1Selected = '';
     const updatedSimpleGroupSelect:any = simpleGroupSelect.map((item:any) => {
         if(item.id === id) {
@@ -1013,31 +1180,116 @@ export function getUpdatedDataArr_GroupSelect(simpleGroupSelect:any, simpleGroup
 
     const updatedDataArr:any = simpleGroup.map((item:any) => {
         if(item.group_id === id) { 
-            return {
-                ...item,
-                isSelected: level1Selected === 'y' ? 'n' : 'y',
-                mobile1Selected: level1Selected === 'y' ? 'n' : 'y',
-                mobile2Selected: 'n',
-                mobile3Selected: 'n',
-            };
+            if(selGroupPhoneType==0){
+                return {
+                    ...item,
+                    isSelected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile1Selected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile2Selected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile3Selected: level1Selected === 'y' ? 'n' : 'y',
+                };
+            }else if(selGroupPhoneType==1){
+                return {
+                    ...item,
+                    isSelected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile1Selected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile2Selected: 'n',
+                    mobile3Selected: 'n',
+                };
+            }else if(selGroupPhoneType==2){
+                return {
+                    ...item,
+                    isSelected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile1Selected: 'n',
+                    mobile2Selected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile3Selected: 'n',
+                };
+            }else if(selGroupPhoneType==3){
+                return {
+                    ...item,
+                    isSelected: level1Selected === 'y' ? 'n' : 'y',
+                    mobile1Selected: 'n',
+                    mobile2Selected: 'n',
+                    mobile3Selected: level1Selected === 'y' ? 'n' : 'y',
+                };
+            }
+            
         }
         return item;
     });
     return {updatedSimpleGroupSelect, updatedDataArr};
 }
 
-export function getUpdatedDataArr_MobileSelect_group(simpleGroup:any, address_id:string, phone_field:string){
+export function getUpdatedDataArr_MobileSelect_group(simpleGroup:any, address_id:string, phone_field:string, selGroupPhoneType:any){
     const updatedDataArr:any = simpleGroup.map((item:any) => {
         if(item.address_id === address_id && item.phone_field == phone_field) {
-            return {
-                ...item,
-                isSelected: item.isSelected === 'y' ? 'n' : 'y',
+            if(selGroupPhoneType==0){
+                return {
+                    ...item,
+                    isSelected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile1Selected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile2Selected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile3Selected: item.isSelected === 'y' ? 'n' : 'y',
+                };
+            }else if(selGroupPhoneType==1){
+                return {
+                    ...item,
+                    isSelected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile1Selected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile2Selected: 'n',
+                    mobile3Selected: 'n',
+                };
+            }else if(selGroupPhoneType==2){
+                return {
+                    ...item,
+                    isSelected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile1Selected: 'n',
+                    mobile2Selected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile3Selected: 'n',
+                };
+            }else if(selGroupPhoneType==3){
+                return {
+                    ...item,
+                    isSelected: item.isSelected === 'y' ? 'n' : 'y',
+                    mobile1Selected: 'n',
+                    mobile2Selected: 'n',
+                    mobile3Selected: item.isSelected === 'y' ? 'n' : 'y',
+                };
             }
+
         }
         return item;
     });
     return updatedDataArr;
 }
+
+
+export function getUpdatedDataArr_MobileTypeSelect_group(simpleGroup:any, address_id:string, phone_field:string, selectType:number){
+    const updatedDataArr:any = simpleGroup.map((item:any) => {
+        if(item.address_id === address_id && item.phone_field == phone_field) {
+            if(selectType==1){
+                return {
+                    ...item,
+                    mobile1Selected: item.mobile1Selected === 'y' ? 'n' : 'y',
+                };
+            }else if(selectType==2){
+                return {
+                    ...item,
+                    mobile2Selected: item.mobile2Selected === 'y' ? 'n' : 'y',
+                };
+            }else if(selectType==3){
+                return {
+                    ...item,
+                    mobile3Selected: item.mobile3Selected === 'y' ? 'n' : 'y',
+                };
+            }
+
+        }
+        return item;
+    });
+    return updatedDataArr;
+}
+
 
 
 export function getFinalSelectedAddBookData_stu(arr:any, hasAuth:boolean, sendMemberInfo:any){
@@ -1188,7 +1440,7 @@ export function getFinalSelectedAddBookData_tea(arr:any){
 
 export function getFinalSelectedAddBookData_group(arr:any){
     const tempArr = arr.filter( (item:any) => {
-        return item.isSelected == 'y'
+        return (item.mobile1Selected == 'y' || item.mobile2Selected == 'y' || item.mobile3Selected == 'y')
     });
 
     let resultArr:any = [];
@@ -1197,25 +1449,18 @@ export function getFinalSelectedAddBookData_group(arr:any){
 
     //모바일 1 설정
     tempArr.forEach((item:any)=>{
-        const {mobile1, phone_field} = item;
+        const {mobile1, phone_field, mobile1Selected} = item;
         let tempObj:any = {};
 
         tempObj.addType = addType;
         tempObj.type = type;
-        tempObj.category1 = item.category1;
-        tempObj.category2 = item.category2;
-        tempObj.category3 = item.category3;
-        tempObj.category4 = item.category4;
-        tempObj.fax = item.fax;
-        tempObj.grade_class = item.grade_class;
         tempObj.isOpen = item.isOpen;
         tempObj.isSelected = item.isSelected;
-        tempObj.kind = item.kind;
         tempObj.name = item.name;
         tempObj.user_id = item.user_id;
         tempObj.groupName = item.groupName;
 
-        if(phone_field=='mobile1' && mobile1!='' && mobile1 != null && mobile1 != undefined){
+        if(mobile1Selected == 'y' && phone_field=='mobile1' && mobile1!='' && mobile1 != null && mobile1 != undefined){
             tempObj.mobile = item.mobile1;
             tempObj.mobileType = 'mobile1';
             resultArr.push(tempObj)
@@ -1224,7 +1469,7 @@ export function getFinalSelectedAddBookData_group(arr:any){
 
     //모바일 2 설정
     tempArr.forEach((item:any)=>{
-        const {mobile2, phone_field} = item;
+        const {mobile2, phone_field, mobile2Selected} = item;
         let tempObj:any = {};
         
         tempObj.addType = addType;
@@ -1235,7 +1480,7 @@ export function getFinalSelectedAddBookData_group(arr:any){
         tempObj.user_id = item.user_id;
         tempObj.groupName = item.groupName;
 
-        if(phone_field=='mobile2' && mobile2!='' && mobile2 != null && mobile2 != undefined){
+        if(mobile2Selected == 'y' &&  phone_field=='mobile1' && mobile2!='' && mobile2 != null && mobile2 != undefined){
             tempObj.mobile = item.mobile2;
             tempObj.mobileType = 'mobile2';
             resultArr.push(tempObj)
@@ -1244,7 +1489,7 @@ export function getFinalSelectedAddBookData_group(arr:any){
 
     //모바일 3 설정
     tempArr.forEach((item:any)=>{
-        const {mobile3, phone_field} = item;
+        const {mobile3, phone_field, mobile3Selected} = item;
         let tempObj:any = {};
 
         tempObj.addType = addType;
@@ -1255,33 +1500,33 @@ export function getFinalSelectedAddBookData_group(arr:any){
         tempObj.user_id = item.user_id;
         tempObj.groupName = item.groupName;
 
-        if(phone_field=='mobile3' && mobile3!='' && mobile3 != null && mobile3 != undefined){
+        if(mobile3Selected == 'y' && phone_field=='mobile1' && mobile3!='' && mobile3 != null && mobile3 != undefined){
             tempObj.mobile = item.mobile3;
             tempObj.mobileType = 'mobile3';
             resultArr.push(tempObj)
         }
     });
 
-    //tel 설정
-    tempArr.forEach((item:any)=>{
-        const {tel, phone_field} = item;
-        let tempObj:any = {};
+    // //tel 설정
+    // tempArr.forEach((item:any)=>{
+    //     const {tel, phone_field} = item;
+    //     let tempObj:any = {};
 
-        tempObj.addType = addType;
-        tempObj.type = type;
-        tempObj.isOpen = item.isOpen;
-        tempObj.isSelected = item.isSelected;
-        tempObj.name = item.name;
-        tempObj.user_id = item.user_id;
-        tempObj.groupName = item.groupName;
+    //     tempObj.addType = addType;
+    //     tempObj.type = type;
+    //     tempObj.isOpen = item.isOpen;
+    //     tempObj.isSelected = item.isSelected;
+    //     tempObj.name = item.name;
+    //     tempObj.user_id = item.user_id;
+    //     tempObj.groupName = item.groupName;
 
-        if(phone_field=='tel' && tel!='' && tel != null && tel != undefined){
-            tempObj.mobile = item.tel;
-            tempObj.mobileType = 'tel';
-            resultArr.push(tempObj)
-        }
-    });
-
+    //     if(phone_field=='tel' && tel!='' && tel != null && tel != undefined){
+    //         tempObj.mobile = item.tel;
+    //         tempObj.mobileType = 'tel';
+    //         resultArr.push(tempObj)
+    //     }
+    // });
+    
     return resultArr;
 }
 

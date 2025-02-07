@@ -10,6 +10,7 @@ import React from "react";
 import { Ionicons } from '@expo/vector-icons'; 
 import { goSendWrite, goSetting, goTest } from "../common/commonNaviFunc";
 import { Shadow } from "react-native-shadow-2";
+import { KakaoBtn } from "../components/KakaoBtn";
 
 const windowHeight = getWindowHeight();
 
@@ -171,7 +172,7 @@ export const SendMain = () =>{
                 </BtnsBoxWrap>
 
             </BtnsView>
-
+            <KakaoBtn />
         </SafeBasicView>
     )
 }

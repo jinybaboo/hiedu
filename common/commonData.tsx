@@ -3,9 +3,9 @@ import axios from 'axios'
 import { getTodayAsYYYYMMDD } from './commonFunc';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-let serverUrl = `http://172.30.1.89:663`;
-serverUrl = `http://192.168.0.32:663`;
-serverUrl = `https://app.hiedu.kr`; 
+let serverUrl = `http://172.30.1.7:663`;
+serverUrl = `http://192.168.0.153:663`;
+// const serverUrl = `https://app.hiedu.kr`; 
 
 export const getLunchInfo = async (ATPT_OFCDC_SC_CODE:string, SD_SCHUL_CODE:string) => {  
     const today = getTodayAsYYYYMMDD();
@@ -13,6 +13,7 @@ export const getLunchInfo = async (ATPT_OFCDC_SC_CODE:string, SD_SCHUL_CODE:stri
     const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${neisKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${SD_SCHUL_CODE}&MLSV_FROM_YMD=${today}`;
     try {
       const res = await axios.get(url);
+      
       return res.data;
     } catch (error) {
       console.error('getLunchInfo', error);
@@ -66,6 +67,7 @@ export const getIsPhoneExist = async (phone:string) => {
   const url = `${serverUrl}/getData/getIsPhoneExist?phone=${phone}`;
   try {
     const {data} = await axios.get(url);
+    
     return data;
   } catch (error) {
     console.error('getIsPhoneExist', error);
@@ -347,6 +349,8 @@ export const getAgreementInfo = async () => {
 }; 
 
 export const getSendList = async (isUser:string, portal_id:string, startDate:string, endDate:string) => {
+  console.log(startDate);
+  
   
   const accessToken =  await EncryptedStorage.getItem('accessToken');
   const url = `${serverUrl}/getData/sendList?isUser=${isUser}&portal_id=${portal_id}&startDate=${startDate}&endDate=${endDate}`;
@@ -403,6 +407,17 @@ export const getUserInfoWithAccessToken = async () => {
     return data[0];
   } catch (error) {
     console.error('getUserInfoWithAccessToken', error);
+  }
+};
+
+export const getSchoolSetting = async (user_id:string) => {
+  const accessToken =  await EncryptedStorage.getItem('accessToken');
+  const url = `${serverUrl}/getData/schoolSetting?user_id=${user_id}`;
+  try {
+    const {data} = await axios.get(url, {headers:{'Authorization': `Bearer ${accessToken}`, }});
+    return data;
+  } catch (error) {
+    console.error('getResendData', error);
   }
 };
 

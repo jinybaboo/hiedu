@@ -13,6 +13,7 @@ import colors from "../common/commonColors";
 import { goBack, goSendList } from "../common/commonNaviFunc";
 import { BlueBottomBtn } from "../components/BlueBottomBtn";
 import { goSendWrite } from "../common/commonNaviFunc";
+import { Shadow } from "react-native-shadow-2";
 
 const windowWidth = getWindowWidth();
 
@@ -63,10 +64,10 @@ const Td6 = styled(Td2)`
 // `
 
 const BtnsView = styled.View`
-    padding:0 20px; flex-direction: row; justify-content: space-around;
+    padding:0 20px; flex-direction: row; justify-content: space-around; height: 190px;
 `
 const ReSendBtn = styled.View`
-    height:36px; background-color:#ffae00 ; border-radius: 3px; justify-content: center; align-items: center; padding: 0 14px;
+    height:36px; background-color:#ffae00 ; border-radius: 3px; justify-content: center; align-items: center; padding: 0 20px;
 `
 const ResendTxt = styled.Text`
     font-family: 'noto400'; font-size: 13px; line-height:17px; color:#FFF; letter-spacing: -0.2px; 
@@ -84,9 +85,24 @@ const UnreadTxt = styled(ResendTxt)`
     
 `
 
+const BtnWrap = styled.View`
+    position: relative; 
+`
+const MoreBtnView = styled.View`
+    position: absolute; top:40px; height:135px; width: 200px; 
+`
+const ReceiveBtnPress = styled.TouchableOpacity`
+   width:100%; height:45px; align-items: center; justify-content: center;  padding: 0 10px;
+`
+const ReceiveBtnTxt = styled.Text`
+    font-family: 'noto400'; font-size: 13px; line-height: 17px; color:${colors.textBlack}; letter-spacing: -0.5px; margin-top: 5px;
+`
+
+
 export const SendListContent = () =>{
     let user_id = useSelector((state:any)=>state.user.user_id);
     let unreadCount = 0;
+    let failCount = 0;
 
     const route = useRoute();			
     const { id, startDate, endDate }:any = route.params; 	
@@ -98,6 +114,7 @@ export const SendListContent = () =>{
     const [refreshing, setRefreshing] = useState(false);
 
     const [isSecret, setIsSecret] = useState(false);
+    const [showMoreBtn, setShowMoreBtn] = useState<any>(false);
 
     async function getData(){
         let data = await getSendListContent(id);
@@ -146,13 +163,20 @@ export const SendListContent = () =>{
     }
     
     function askReSendAllUnread(){
+        setShowMoreBtn(false);
+
+        if(category=='survey' ){
+            Alert.alert('','설문조사는 SMS로 재발송 할 수 없습니다.');
+            return;
+        }
+
         if(unreadCount==0){
             Alert.alert('','재발송 대상이 없습니다.');
             return;
         }
 
         Alert.alert( //alert 사용							
-            '안내',  `sms 발송 문자 건수에 대하여 요금이 발생합니다.${'\n'}읽지 않은 APP발신 ${unreadCount}건을 SMS 문자로 재발신 하시겠습니까?`, [					
+            '안내',  `SMS 발송 문자 건수에 대하여 요금이 발생합니다.${'\n'}읽지 않은 APP발신 ${unreadCount}건을 SMS 문자로 재발신 하시겠습니까?`, [					
                 {text: '취소', onPress: () => {}},			
                 {text: '확인', onPress: () => {
                     const umslog_report_arr = data.filter( (item:any) => (							
@@ -164,8 +188,33 @@ export const SendListContent = () =>{
         );							
     }
 
-    function askCancelReserve(){
+    function askReSendFailed(){
+        setShowMoreBtn(false);
 
+        if(category=='survey' ){
+            Alert.alert('','설문조사는 SMS로 재발송 할 수 없습니다.');
+            return;
+        }
+        
+        if(failCount==0){
+            Alert.alert('','발송에 실패한 건이 없습니다.');
+            return;
+        }
+
+        Alert.alert( //alert 사용							
+            '안내',  `SMS 발송 문자 건수에 대하여 요금이 발생합니다.${'\n'}발송에 실패한 ${unreadCount}건을 SMS 문자로 재발신 하시겠습니까?`, [			
+                {text: '취소', onPress: () => {}},			
+                {text: '확인', onPress: () => {
+                    const umslog_report_arr = data.filter( (item:any) => (							
+                        item.result == '2'
+                    ));
+                    resendSms(id, umslog_report_arr);
+                }}, 		
+            ]						
+        );				
+    }
+
+    function askCancelReserve(){
         Alert.alert( //alert 사용							
             '안내',  `발송 예약을 취소 하시겠습니까?`, [					
                 {text: '취소', onPress: () => {}},			
@@ -183,6 +232,7 @@ export const SendListContent = () =>{
 
 
     function checkResendWrite(category:string, umslog_id:string, send_from:string){
+        setShowMoreBtn(false); 
         if(send_from==='web'){
             Alert.alert('안내', '웹에서 발송한 건은 받는사람 내역을 불러올 수 없습니다.')
         }
@@ -223,6 +273,7 @@ export const SendListContent = () =>{
 
 
     let isShowCancelReserve = false;
+    
 
     return (
         <SafeBasicView>
@@ -275,6 +326,11 @@ export const SendListContent = () =>{
                     if((result=='1' && item.send_type=='app' && item.is_read == 0)){
                         unreadCount++;
                     }
+                    if((result==2)){
+                        failCount++;
+                    }
+
+                    
 
                     return(
                         <TrView key={'list_'+idx} style={idx%2==1&&{backgroundColor:'#F9F9F9'}}>
@@ -296,25 +352,57 @@ export const SendListContent = () =>{
                 <Space height={25}/>
 
                 <BtnsView>
-                    <Pressable onPress={()=>{checkResendWrite(category, umslog_id, send_from)}}>
-                        <ReSendBtn>
-                            <ResendTxt>재전송</ResendTxt>
-                        </ReSendBtn>
-                    </Pressable>
-                     
+                    <BtnWrap>
+                        <Pressable onPress={()=>{setShowMoreBtn(!showMoreBtn)}}>
+                            <ReSendBtn>
+                                <ResendTxt>재전송</ResendTxt>
+                            </ReSendBtn>
+                        </Pressable>
+
+                        {showMoreBtn &&
+                        <MoreBtnView>
+                            <Shadow		
+                                style={{
+                                    borderRadius:10, 
+                                    backgroundColor:'#FFF',
+                                    
+                                }}	
+                                distance={10} 
+                                startColor={'#f0f0f0'} 
+                                endColor={'#FFFFFF'} 
+                                offset={[4, 6]}
+                            >	
+                                <ReceiveBtnPress onPress={()=>{checkResendWrite(category, umslog_id, send_from)}}>
+                                    <ReceiveBtnTxt style={{marginTop:10}}>다시 작성하기</ReceiveBtnTxt>
+                                </ReceiveBtnPress>
+                               {!isShowCancelReserve &&
+                                <ReceiveBtnPress onPress={askReSendAllUnread}>
+                                    <ReceiveBtnTxt style={{marginTop:-3}} >미열람 SMS 재발송 ({unreadCount}건)</ReceiveBtnTxt>
+                                </ReceiveBtnPress>
+                                }
+                                {!isShowCancelReserve &&
+                                <ReceiveBtnPress onPress={askReSendFailed}>
+                                    <ReceiveBtnTxt style={{marginTop:-18}}>실패건 SMS 재발송 ({failCount}건)</ReceiveBtnTxt>
+                                </ReceiveBtnPress>
+                                }
+                            </Shadow>
+                        </MoreBtnView>
+                        }
+                    </BtnWrap>
+
                     <Pressable onPress={()=>{updateSecretLock(isSecret)}}>
                         <LockBtn>
                             <LockTxt>{isSecret?'잠금 해제':'메세지 잠금'}</LockTxt>
                         </LockBtn>
                     </Pressable>
                     
-                    {category !=='survey' && !isShowCancelReserve &&
+                    {/* {category !=='survey' && !isShowCancelReserve &&
                     <Pressable onPress={askReSendAllUnread}>
                         <UnreadBtn>
-                            <UnreadTxt>미열람 SMS 재발송({unreadCount}건)</UnreadTxt>
+                            <UnreadTxt>미열람 SMS 발송({unreadCount}건)</UnreadTxt>
                         </UnreadBtn>
                     </Pressable>
-                    }
+                    } */}
 
                     {isShowCancelReserve &&
                     <Pressable onPress={askCancelReserve}>
@@ -325,10 +413,7 @@ export const SendListContent = () =>{
                         </UnreadBtn>
                     </Pressable>
                     }
-
-
                 </BtnsView>
-
                 
             </BasicScrollView>
         </SafeBasicView>

@@ -14,6 +14,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { loginCheckAndSaveSendInfo } from "../common/commonExportFunc";
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios'
+import { Loader } from "../components/Loader";
 
 const os = Platform.OS;
 
@@ -97,7 +98,9 @@ export const LoginAgree2 = () =>{
     const [isSendPhoneBtnDisabled, setIsSendPhoneBtnDisabled] = useState(false);
 
     // 모달관리
-    const [isShowModal, setIsShowModal] = useState(false)
+    const [isShowModal, setIsShowModal] = useState(false);
+
+    const [showLoader, setShowLoader] = useState<any>(false);
 
     const phoneInputRef:any = useRef(null);
     const serialInputRef:any = useRef(null);
@@ -141,6 +144,7 @@ export const LoginAgree2 = () =>{
     }
 
     const checkGoHome = async () =>{
+        setShowLoader(true);
         const fcmToken = await messaging().getToken();
         if(isSerialConfirmed){
             const isNumExistInDB = await getIsExistAndSaveIfExist(phone, fcmToken);
@@ -154,6 +158,7 @@ export const LoginAgree2 = () =>{
                 //모달 보여주고 애니메이션 띄우기
                 openLoginReject();
             }
+            setShowLoader(false);
         }
     }
 
@@ -220,14 +225,15 @@ export const LoginAgree2 = () =>{
         Keyboard.dismiss();
         inActivePhoneSend();
 
-
         //DB에 전화번호 없을시 인증문자 발송 거절
         const isNumExistInDB = await getIsPhoneExist(phone);
+        
+        console.log(isNumExistInDB);
+        
         if(!isNumExistInDB){
             openLoginReject();
             return;
         }
-
 
         const randomNum = phone==='01012340000'?'000000': getRandomNum6();
         setSerialSent(randomNum)
@@ -235,7 +241,6 @@ export const LoginAgree2 = () =>{
         if(phone!==''){
             await sendSMS_Random6(randomNum, phone, ip);
         }
-
 
         console.log(randomNum);
 
@@ -351,9 +356,12 @@ export const LoginAgree2 = () =>{
             <Space height={18}/>
             <SerialSubTxt> · 휴대폰으로 전송된 인증번호를 입력해 주세요</SerialSubTxt>
             </>
-            :<></>
+            :
+            <>
+            </>
             }
-
+            
+            {showLoader && <Loader />}
 
             <ContinuePress onPress={checkGoHome}>
                 <BlueBottomBtn text={'로그인 하기'} status={isSerialConfirmed?'active':'inactive'}/>
@@ -361,6 +369,7 @@ export const LoginAgree2 = () =>{
 
             </BasicInnerView>
         </SafeBasicView>
+
 
         {isShowModal && 
         <ModalBackground>

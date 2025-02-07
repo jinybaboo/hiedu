@@ -154,7 +154,6 @@ const Tabs = () => {
                 }}
             />}
           
-            
             <Tab.Screen name="마이페이지" component={Mypage} 
                  options={{
                     tabBarActiveTintColor : colors.mainBlue,
@@ -163,7 +162,6 @@ const Tabs = () => {
                     },
                 }}
             />
-
         </Tab.Navigator>
     )
 };

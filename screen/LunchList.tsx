@@ -13,7 +13,7 @@ import { Loader } from "../components/Loader";
 import { LunchBox } from "../components/LunchBox";
 import { getMyInfoDataForBottomSelect } from "../common/commonExportFunc";
 import { getLunchInfo, getMySchoolCodeInfo, getMypageInfo} from "../common/commonData";
-import { removeDuplicateJsonArrData } from "../common/commonFunc";
+import { removeDuplicateJsonArrData, sortJsonArrayByKey } from "../common/commonFunc";
 
 
 
@@ -70,7 +70,9 @@ export const LunchList = () =>{
                 dataTemp = [...dataTemp, ...lunchArr];
             }
         }
-        setListData(dataTemp);
+
+        const finalData = sortJsonArrayByKey(dataTemp, 'MLSV_YMD');
+        setListData(finalData);
 
         setIsLoading(false);
 

@@ -17,6 +17,7 @@ import { CircleTxtBanner } from "../components/CircleTxtBanner";
 import { Entypo } from '@expo/vector-icons';
 import { useAppDispatch } from "../store";
 import { StatusBar } from "expo-status-bar";
+import { KakaoBtn } from "../components/KakaoBtn";
 
 const HomeLetterFlatList = styled.FlatList`
     margin-bottom: 50px;
@@ -39,7 +40,6 @@ const UnreadTxt2 = styled(UnreadTxt1)`
 const UnreadTxt3 = styled.Text`
     font-family: 'noto400'; font-size: 13px; line-height: 16px; color:#c3c3c3; letter-spacing: -0.1px; margin-top: 20px;
 `
-
 
 
 export const BoardList = () =>{
@@ -145,11 +145,15 @@ export const BoardList = () =>{
 
     const dataLength = listData?.length;
 
-    if(isLoading){return <Loader/>}
-
-
     return (
         <>
+        
+        {isLoading?
+        <SafeBasicView>
+            <HeaderCustom title={"공지사항"} hideBack={true}/>
+            <Loader/>
+        </SafeBasicView>
+        :
         <SafeBasicView>
             <HeaderCustom title={"공지사항"} hideBack={true}/>
             {dataLength<1?
@@ -182,7 +186,10 @@ export const BoardList = () =>{
                 />
            </NoPaddingView>
            }
+
+            <KakaoBtn />
         </SafeBasicView>
+        }
             
         {isShowBottomModal &&
             <StudentSelectBottom 

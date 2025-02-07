@@ -12,6 +12,7 @@ import styled from "styled-components/native";
 import { getWindowHeight, getWindowWidth } from './common/commonFunc';
 import { Space } from './common/commonStyled';
 import colors from './common/commonColors';
+import { KakaoBtn } from './components/KakaoBtn';
 
 // 페이지 이동을 위한 네이게이터 생성 및 제작
 const NativeStack = createNativeStackNavigator();
@@ -44,12 +45,6 @@ const AlertBtnTxt2 = styled(AlertBtnTxt)`
     color:${colors.dateGray};
 `
 
-const KakaoBtn = styled.Pressable`
-    width: 40px; height: 40px; position: absolute; bottom:${os==='ios'?100:70}px; right:20px; 
-`
-const KakaoImg = styled.Image`
-    width: 40px; height:40px; border-radius: 50px;
-`
 
 let customFonts = {
     'noto100': require('./assets/fonts/NotoSansKR_100Thin.ttf'),
@@ -120,9 +115,7 @@ const AppInnerForRedux:any = () => {
             </AlertView>
             }
 
-            <KakaoBtn onPress={()=>{linkWeb('http://pf.kakao.com/_nzxabxj/chat')}}>
-                <KakaoImg source={require('./assets/icons/kakao2.jpeg')}/>
-            </KakaoBtn>
+            {/* <KakaoBtn /> */}
         </NavigationContainer>
     )
 }

@@ -26,7 +26,7 @@ const LunchHeadTxt2 = styled.Text`
     font-family: 'noto400'; font-size: 12px; line-height: 15px; color:${colors.textBlack}; letter-spacing: -0.1px; margin-top: 2px;
 `
 const LunchHeadTxt3 = styled(LunchHeadTxt2)`
-    margin-top: 0px;
+    margin-top: 0px; font-family: 'noto500';
 `
 // 대시라인
 const DashBox = styled.View`

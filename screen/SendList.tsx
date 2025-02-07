@@ -1,6 +1,6 @@
 import react, { useEffect, useState } from "react";
 import styled from "styled-components/native";
-import { BasicScrollView, HeaderSpaceForAndroid, ModalBackground, SafeBasicView, Space } from "../common/commonStyled";
+import { BasicScrollView, HeaderSpaceForAndroid, SafeBasicView, Space } from "../common/commonStyled";
 import { Ionicons } from '@expo/vector-icons'; 
 import { getNumberDaysBefore, getWindowHeight, getWindowWidth, getYYMMDD_dash, getYYYYMMDD_dash, getYYYYMMDD_dot } from "../common/commonFunc";
 import { Alert, BackHandler, DeviceEventEmitter, Platform, RefreshControl, TouchableOpacity } from "react-native";
@@ -116,23 +116,26 @@ export const SendList = () =>{
 
     const [isShowDatePicker, setIsShowDatePicker] = useState(false);
     const [dateKind, setDateKind] = useState('startDate');
-    const [startDate, setStartDate] = useState<any>(getNumberDaysBefore(6));
+    const [startDate, setStartDate] = useState<any>(getNumberDaysBefore(30));
     const [endDate, setEndDate] = useState<any>(new Date());
 
     async function getData(){
         const data = await getSendList(isUser, portal_id, getYYYYMMDD_dash(startDate) , getYYYYMMDD_dash(endDate));
         setData(data);
+
         setIsLoading(false);
     }
 
     async function getDataFromContentBack(obj:any){
         const data = await getSendList(isUser, portal_id, getYYYYMMDD_dash(obj.startDate) , getYYYYMMDD_dash(obj.endDate));
         setData(data);
+
         setIsLoading(false);
     }
 
     useEffect(()=>{
         getData();
+
         DeviceEventEmitter.addListener('backFromResult', (data) => {
             getDataFromContentBack(data);
         });
@@ -173,7 +176,6 @@ export const SendList = () =>{
             return;
         }
 
-
         const sDate = dateKind==='startDate'?selectedDate:startDate;
         const eDate = dateKind==='startDate'?endDate:selectedDate;
 
@@ -187,7 +189,6 @@ export const SendList = () =>{
         if(dateGap>30*6){
             Alert.alert('안내','검색기간이 클 경우 데이터 호출이 지연될 수 있습니다.');
         }
-
 
         
         setIsLoading(true);

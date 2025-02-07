@@ -4,18 +4,18 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import Stack from "./Stack";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, AppState, BackHandler } from "react-native";
+import { Alert, AppState, BackHandler, Platform } from "react-native";
 import { goAlarmContent, goBack, goHome, goHomeLetterContent, goSurveyList} from "../common/commonNaviFunc";
-import { loginCheckAndSaveSendInfo } from "../common/commonExportFunc";
+import { linkWeb, loginCheckAndSaveSendInfo } from "../common/commonExportFunc";
 import { useAppDispatch } from "../store";
 import messaging from '@react-native-firebase/messaging';
 import { useSelector } from "react-redux";
 import { getUmslogInsertDate } from "../common/commonData";
 import { goAlarmList } from "../common/commonNaviFunc";
 import { goHomeLetterList } from "../common/commonNaviFunc";
+import styled from "styled-components/native";
 
 const Nav = createNativeStackNavigator();
-
 
 const RootNav = () => {
     const navigation = useNavigation();
@@ -148,7 +148,6 @@ const RootNav = () => {
         >
             <Nav.Screen name ="Tabs" component={Tabs} />
             <Nav.Screen name ="Stack" component={Stack} />
-            
         </Nav.Navigator>
     )
 }

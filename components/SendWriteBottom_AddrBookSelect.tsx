@@ -83,9 +83,9 @@ const AddBookBtnTxt = styled.Text`
     font-family: 'noto400'; font-size: 14px; line-height: 17px; color:#FFF; letter-spacing: -0.2px; margin-top: 1.5px;
 `
 
-export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookModal, selectAddBookData, addBookCate, setAddBookCate, changeMobileType, selPhoneType, 
+export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookModal, selectAddBookData, addBookCate, setAddBookCate, changeMobileType, changeMobileTypeGroup, selPhoneType, selGroupPhoneType,
     toggleGradeSelect, gradeArr, toggleGrade, classArr, toggleClassSelect, toggleClass, simpleStuAndPar, toggleStudentSelect, toggleLv4, toggleMobileSelect_stu, 
-    teacherCateArr, simpleTeacher, toggleTeacherCateSelect, toggleTeacherCate, toggleMobileSelect_tea, simpleGroupSelect, simpleGroup, toggleGroupSelect, toggleGroup, toggleMobileSelect_group}:any)=>{
+    teacherCateArr, simpleTeacher, toggleTeacherCateSelect, toggleTeacherCate, toggleMobileSelect_tea, simpleGroupSelect, simpleGroup, toggleGroupSelect, toggleGroup, toggleGroupLv2, toggleMobileSelect_group, toggleMobileTypeSelect_group}:any)=>{
     
     return (
         <ModalBackground>
@@ -319,7 +319,20 @@ export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookMod
                     {addBookCate == 3 &&
                     <BookBackground>
                         <Padding15>
-                            <Space height={15}/>
+                            <PhoneSelView>
+                                <PhoneSelPress onPress={()=>{changeMobileTypeGroup(1)}}>
+                                    <MaterialIcons name={selGroupPhoneType==1?"radio-button-on":"radio-button-off"} size={18} color={colors.mainBlue} />
+                                    <PhoneSelTxt>휴대폰번호1</PhoneSelTxt>
+                                </PhoneSelPress>
+                                <PhoneSelPress onPress={()=>{changeMobileTypeGroup(2)}}>
+                                    <MaterialIcons name={selGroupPhoneType==2?"radio-button-on":"radio-button-off"} size={18} color={colors.mainBlue} />
+                                    <PhoneSelTxt>휴대폰번호2</PhoneSelTxt>
+                                </PhoneSelPress>
+                                <PhoneSelPress onPress={()=>{changeMobileTypeGroup(3)}}>
+                                    <MaterialIcons name={selGroupPhoneType==3?"radio-button-on":"radio-button-off"} size={18} color={colors.mainBlue} />
+                                    <PhoneSelTxt>휴대폰번호3</PhoneSelTxt>
+                                </PhoneSelPress>                                
+                            </PhoneSelView>
                             <BookBackground2_1>
                                 
                             {simpleGroupSelect !=0 &&
@@ -340,35 +353,73 @@ export const SendWriteBottom_AddrBookSelect = ({aniBoxPositionY, closeAddBookMod
                                         simpleGroup.map((item1:any, idx1:number)=>{
                                             const group_id = item1.group_id;
                                             const name = item1.name;
+
+                                            const mobile1 = item1?.mobile1;
+                                            const mobile2 = item1?.mobile2;
+                                            const mobile3 = item1?.mobile3;
+                                            
+                                            const mobile1Selected = item1?.mobile1Selected;
+                                            const mobile2Selected = item1?.mobile2Selected;
+                                            const mobile3Selected = item1?.mobile3Selected;
+
                                             const isOpen = item1?.isOpen;
                                             const isSelected1 = item1?.isSelected;
                                             const phone_field = item1?.phone_field;
                                             const address_id = item1?.address_id;
+                                            const showLv2 = item1?.showLv2;
 
-                                            let mobileNumType = "";
-                                            if(phone_field=='mobile1'){
-                                                mobileNumType ="(휴대폰번호)"; 
-                                            }else if(phone_field=='mobile2'){
-                                                mobileNumType ="(휴대폰번호)";
-                                            }else if(phone_field=='mobile3'){
-                                                mobileNumType ="(휴대폰번호)";
-                                            }else if(phone_field=='tel'){
-                                                mobileNumType ="(전화번호)";
-                                            }
 
                                             return(
                                                 <View key={'class_'+idx1}>
                                                     {id == group_id && isOpen =='y' && 
-                                                    <SelectView_Lv2>
-                                                        <SelectLeftPress2 onPress={()=>{toggleMobileSelect_group(address_id, phone_field)}}>
-                                                            <TreeImg source={require('../assets/icons/treeSide.png')} style={{marginRight:3}}/>
-                                                            <TreeImg source={isSelected1=='n'?require('../assets/icons/treeCheckOff.png'):require('../assets/icons/treeCheckOn.png')}/>
-                                                            <TreeTxt>{name} {mobileNumType}</TreeTxt>
-                                                        </SelectLeftPress2>
-                                                    </SelectView_Lv2>
+                                                    <>
+                                                        <SelectView_Lv2>
+                                                            <SelectLeftPress2 onPress={()=>{toggleMobileSelect_group(address_id, phone_field)}}>
+                                                                <TreeImg source={require('../assets/icons/treeSide.png')} style={{marginRight:3}}/>
+                                                                <TreeImg source={isSelected1=='n'?require('../assets/icons/treeCheckOff.png'):require('../assets/icons/treeCheckOn.png')}/>
+                                                                <TreeTxt>{name}</TreeTxt>
+                                                            </SelectLeftPress2>
+                                                            <SelectRightPress2 onPress={()=>{toggleGroupLv2(address_id)}}>
+                                                                <TreeImg source={showLv2=='n'?require('../assets/icons/treePlus.png'):require('../assets/icons/treeMinus.png')}/>
+                                                            </SelectRightPress2>
+                                                        </SelectView_Lv2>
+
+                                                        {showLv2 === 'y' &&
+                                                        <>
+                                                        {mobile1!=''&& mobile1 != null && mobile1 != undefined && 
+                                                        <SelectView_Lv3>
+                                                            <SelectLeftPress2 onPress={()=>{toggleMobileTypeSelect_group(address_id, phone_field, 1)}}>
+                                                                <TreeImg source={require('../assets/icons/treeAngle.png')} style={{marginRight:3}}/>
+                                                                <TreeImg source={mobile1Selected=='n'?require('../assets/icons/treeCheckOff.png'):require('../assets/icons/treeCheckOn.png')}/>
+                                                                <TreeTxt>휴대폰번호1</TreeTxt>
+                                                            </SelectLeftPress2>
+                                                        </SelectView_Lv3>
+                                                        }
+                                                        {mobile2!=''&& mobile2 != null && mobile2 != undefined && 
+                                                        <SelectView_Lv3>
+                                                            <SelectLeftPress2 onPress={()=>{toggleMobileTypeSelect_group(address_id, phone_field, 2)}}>
+                                                                <TreeImg source={require('../assets/icons/treeAngle.png')} style={{marginRight:3}}/>
+                                                                <TreeImg source={mobile2Selected=='n'?require('../assets/icons/treeCheckOff.png'):require('../assets/icons/treeCheckOn.png')}/>
+                                                                <TreeTxt>휴대폰번호2</TreeTxt>
+                                                            </SelectLeftPress2>
+                                                        </SelectView_Lv3>
+                                                        }
+                                                        {mobile3!=''&& mobile3 != null && mobile3 != undefined && 
+                                                        <SelectView_Lv3>
+                                                            <SelectLeftPress2 onPress={()=>{toggleMobileTypeSelect_group(address_id, phone_field, 3)}}>
+                                                                <TreeImg source={require('../assets/icons/treeAngle.png')} style={{marginRight:3}}/>
+                                                                <TreeImg source={mobile3Selected=='n'?require('../assets/icons/treeCheckOff.png'):require('../assets/icons/treeCheckOn.png')}/>
+                                                                <TreeTxt>휴대폰번호3</TreeTxt>
+                                                            </SelectLeftPress2>
+                                                        </SelectView_Lv3>
+                                                        }
+                                                        </>
+                                                        }
+                                                        
+
+                                                    </>
                                                     }
                                                 </View>
-                                            
                                             )
                                         //그룹 프린트 끝 
                                         })}

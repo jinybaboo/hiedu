@@ -13,10 +13,10 @@ import { Alert, Animated, BackHandler, Keyboard, Platform, Pressable, ScrollView
 import { useSelector } from "react-redux";
 import { getAppMemberPhone, getResendData, getSendMemberInfo, getSendPhoneNumber, getSimpleAddr, getSimpleAddrGroup, getSimpleAddrGroupSelect, insertBoardData, insertFilesToJavaServer, insertSendData } from "../common/commonData";
 import { Loader } from "../components/Loader";
-import { addSimpleAddr, checkAppMember, filterAddBookStudentNoAuthClassTeacher, getFinalSelectedAddBookData_group, getFinalSelectedAddBookData_stu, getFinalSelectedAddBookData_tea, 
+import { addSimpleAddr, checkAppMember, filterAddBookStudentNoAuthClassTeacher, getDirectPhoneSendAddrInfo, getFinalSelectedAddBookData_group, getFinalSelectedAddBookData_stu, getFinalSelectedAddBookData_tea, 
     getUpdatedDataArr_ClassSelect, getUpdatedDataArr_GradeSelect, getUpdatedDataArr_GroupSelect, getUpdatedDataArr_MobileSelect_group, getUpdatedDataArr_MobileSelect_stu, 
-    getUpdatedDataArr_MobileSelect_tea, getUpdatedDataArr_StudentSelect, getUpdatedDataArr_TeacherCate1Select, getUpdatedDataArr_ToggleClass, getUpdatedDataArr_ToggleGrade, 
-    getUpdatedDataArr_ToggleGroup, getUpdatedDataArr_ToggleTeacherCate, getUpdatedStudentArr_ToggleLv4, printSimpleAddrGroup, printSimpleAddrStudent, printSimpleAddrTeacher 
+    getUpdatedDataArr_MobileSelect_tea, getUpdatedDataArr_MobileTypeSelect_group, getUpdatedDataArr_StudentSelect, getUpdatedDataArr_TeacherCate1Select, getUpdatedDataArr_ToggleClass, getUpdatedDataArr_ToggleGrade, 
+    getUpdatedDataArr_ToggleGroup, getUpdatedDataArr_ToggleGroupLv2, getUpdatedDataArr_ToggleTeacherCate, getUpdatedStudentArr_ToggleLv4, isDirectPhoneAppMember, printSimpleAddrGroup, printSimpleAddrStudent, printSimpleAddrTeacher 
 } from "../common/commonExportFunc";
 import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -163,6 +163,25 @@ const DelReceivePress = styled.Pressable`
 `
 
 
+//직접입력 모달
+const SurveyInputView = styled.View`
+   width:100%; height:100%; position: absolute; flex:1; background-color:rgba(0,0,0,0.7);
+`
+const SurveyInputBox = styled.View`
+     width:${windowWidth-40}px; height:85px; border-radius: 10px; background-color: #FFF; position:absolute; top:50px; left:20px; padding: 15px;
+`
+const SurveyInputBoxTxt = styled.Text`
+    font-family: 'noto500'; font-size: 12px; line-height: 17px; color:${colors.placeholder}; letter-spacing: -0.2px; margin-top: 1.5px;
+`
+const SurveyInput = styled.TextInput`
+     width:100%; height:35px; border-radius: 10px; background-color: #FFF; margin-top: 10px;
+`
+const SurveyInputClosePress = styled.Pressable`
+    position: absolute;  right:5px; top:5px; padding:5px;
+`
+
+
+
 // 로더 
 const LoaderView = styled.View`
     width: 100%; height:${windowHeight}px; justify-content: center; align-items: center; background-color: #FFFFFF;
@@ -227,6 +246,7 @@ export const SendWrite = () =>{
     const [isShowSurveyDoubleCountModal, setIsShowSurveyDoubleCountModal] = useState(false);
     const [isShowReserveDatePicker, setIsShowReserveDatePicker] = useState(false);
     const [isShowReserveTimePicker, setIsShowReserveTimePicker] = useState(false);
+    const [isShowDirectPhoneInput, setIsShowDirectPhoneInput] = useState(false);
 
     const [simpleStuAndPar, setSimpleStuAndParent] = useState([]);
     const [simpleTeacher, setSimpleTeacher] = useState([]);
@@ -260,6 +280,7 @@ export const SendWrite = () =>{
     const [isShowAddBook, setIsShowAddBook] = useState(false);
     const [addBookCate, setAddBookCate] = useState(1);
     const [selPhoneType, setSelPhoneType] = useState(0);
+    const [selGroupPhoneType, setSelGroupPhoneType] = useState(0);
     const [gradeArr, setGradeArr] = useState([]);
     const [classArr, setClassArr] = useState([]);
     const [teacherCateArr, setTeacherCateArr] = useState([]);
@@ -269,6 +290,7 @@ export const SendWrite = () =>{
     const [finalSendInfoArr, setFinalSendInfoArr] = useState<any>([]);
     const [simpleAddrFinal, setSimpleAddrFinal] = useState<any>([])
     const [addBookAddrFinal, setAddBookAddrFinal] = useState<any>([])
+    const [directPhoneInputFinal, setDirectPhoneInputFinal] = useState<any>([])
     const [appCount, setAppCount] = useState(0);
     const [smsCount, setSmsCount] = useState(0);
 
@@ -294,6 +316,7 @@ export const SendWrite = () =>{
     //설문조사 작성
     const [writeSurveyInputType, setWriteSurveyInputType] = useState<any>('');
     const [surveyInputTxt, setSurveyInputTxt] = useState('');
+    const [directPhoneNumber, setDirectPhoneNumber] = useState('');
     const [surveyArr, setSurveyArr] = useState<any>([]);
     const [currentWriteSurveyObj, setCurrentWriteSurveyObj] = useState<any>({qType:'',isDoubleAnswer:'', question:'',answer:[]});
     const [currentWriteSurveyAnsArr, setCurrentWriteSurveyAnsArr] = useState<any>(['','']);
@@ -325,6 +348,7 @@ export const SendWrite = () =>{
     const surveyWriteInputRef:any = useRef(null);
     const subjectInputRef:any = useRef();
     const qrUrlInputRef:any = useRef();
+    const directPhoneInputRef:any = useRef();
 
 
     const backAction = () => {
@@ -385,14 +409,15 @@ export const SendWrite = () =>{
 	    let simpleAddrTeacherArr = filterJsonArrKeyValue(data, "kind", "t"); 
         simpleAddrTeacherArr = sortJsonArrayWithKey(simpleAddrTeacherArr, 'name');
         
-        
         setSimpleStuAndParent(simpleAddrStudentAndParentArr);
         setSimpleTeacher(simpleAddrTeacherArr);
         data = await getSimpleAddrGroupSelect(user_id);
+        
         data = hasSelect_A ? data : []; //그룹 조회 권한 설정
         setSimpleGroupSelect(data);
   
         data = await getSimpleAddrGroup(user_id);
+
         setSimpleGroup(data);
 
         let appMemberPhonedata = await getAppMemberPhone();
@@ -410,7 +435,7 @@ export const SendWrite = () =>{
         data = await getSendMemberInfo(isUser, member_id);
         setSendMemberInfo(data);
 
-        //재발송일때 데터 설정
+        //재발송일때 데이터 설정
         if(!isResendLoaded && resend_id!=='none'){
             setIsResendLoaded(true);
             data = await getResendData(resend_id);
@@ -499,6 +524,7 @@ export const SendWrite = () =>{
         setReloadData(!reloadData);
         setAddBookCate(1);
         setSelPhoneType(0);
+        setSelGroupPhoneType(0);
     }
 
     function openAddBookModal(){
@@ -846,7 +872,8 @@ export const SendWrite = () =>{
             pickerArr = printSimpleAddrTeacher(simpleTeacher, hasSelect_T);
         } 
         if(type=='group'){
-            pickerArr = printSimpleAddrGroup(simpleGroupSelect, hasSelect_A);
+            // pickerArr = printSimpleAddrGroup(simpleGroupSelect, hasSelect_A);
+            pickerArr = printSimpleAddrGroup(simpleGroup, hasSelect_A);
         }
 
         setSimplePickerArr(pickerArr);
@@ -876,13 +903,16 @@ export const SendWrite = () =>{
         
         const valueObj = JSON.parse(value);
         const tempArr = [valueObj]
+        
         setIsShowSimplePicker(false);
 
         const simpleAddrTemp =  addSimpleAddr(tempArr, simpleStuAndPar, simpleTeacher, simpleGroup);
+
+        
         const simpleAddrFinalTemp = [...simpleAddrFinal, ...simpleAddrTemp];
         setSimpleAddrFinal(simpleAddrFinalTemp);
 
-        const totalTempArr = [...addBookAddrFinal, ...simpleAddrFinalTemp];
+        const totalTempArr = [...addBookAddrFinal, ...simpleAddrFinalTemp, ...directPhoneInputFinal];
         prepareFinalTotalData(totalTempArr);
     }
 
@@ -903,8 +933,9 @@ export const SendWrite = () =>{
         }
 
         const tempArr = [...addBookAddrFinal, ...addBookAddrTemp];
+
         setAddBookAddrFinal(tempArr);
-        const totalTempArr = [...tempArr, ...simpleAddrFinal];
+        const totalTempArr = [...tempArr, ...simpleAddrFinal, ...directPhoneInputFinal];
 
 
 
@@ -948,11 +979,18 @@ export const SendWrite = () =>{
                     });
 
                     const tempAddBookArr = tempArr.filter((item:any)=>{
-                        return item.addType != '간편추가';
+                        return item.addType.includes('주소록');
                     });
+
+                    const tempDirectArr = tempArr.filter((item:any)=>{
+                        return item.addType == '직접입력';
+                    });
+
 
                     setSimpleAddrFinal(tempSimpleArr);
                     setAddBookAddrFinal(tempAddBookArr);
+                    setDirectPhoneInputFinal(tempDirectArr);
+                    
                     prepareFinalTotalData(tempArr);
 
                     // setSimpleAddrFinal(tempSimpleArr);
@@ -974,6 +1012,7 @@ export const SendWrite = () =>{
         setSelectedSimpleValueArr([]);
         setSimpleAddrFinal([]);
         setAddBookAddrFinal([]);
+        setDirectPhoneInputFinal([]);
         setAppCount(0);
         setSmsCount(0);
     }
@@ -1044,7 +1083,13 @@ export const SendWrite = () =>{
         setSimpleGroup(updatedDataArr);
         setIsBookLoading(false);
     }
-
+    async function toggleGroupLv2(address_id:string){
+        setIsBookLoading(true); 
+        await delay(10);
+        let {updatedDataArr} = getUpdatedDataArr_ToggleGroupLv2(simpleGroupSelect, simpleGroup, address_id);
+        setSimpleGroup(updatedDataArr);
+        setIsBookLoading(false);
+    }
 
 
     //주소록 셀렉트 (학생부분)
@@ -1087,13 +1132,18 @@ export const SendWrite = () =>{
 
     //주소록 셀렉트 (그룹)
     function toggleGroupSelect(id:string){
-        let {updatedSimpleGroupSelect, updatedDataArr} = getUpdatedDataArr_GroupSelect(simpleGroupSelect, simpleGroup, id);
+        let {updatedSimpleGroupSelect, updatedDataArr} = getUpdatedDataArr_GroupSelect(simpleGroupSelect, simpleGroup, id, selGroupPhoneType);
         setSimpleGroupSelect(updatedSimpleGroupSelect);
         setSimpleGroup(updatedDataArr); 
     }
 
     function toggleMobileSelect_group(address_id:string, phone_field:string){
-        const updatedDataArr = getUpdatedDataArr_MobileSelect_group(simpleGroup, address_id, phone_field);
+        const updatedDataArr = getUpdatedDataArr_MobileSelect_group(simpleGroup, address_id, phone_field, selGroupPhoneType);
+        setSimpleGroup(updatedDataArr); 
+    }
+
+    function toggleMobileTypeSelect_group (address_id:string, phone_field:string, selectType:number){
+        const updatedDataArr = getUpdatedDataArr_MobileTypeSelect_group(simpleGroup, address_id, phone_field, selectType);
         setSimpleGroup(updatedDataArr); 
     }
 
@@ -1132,6 +1182,36 @@ export const SendWrite = () =>{
     }
 
     function changeMobileTypeGroup(typeNum:any){
+        setSelGroupPhoneType(typeNum)
+
+        const updatedDataArr:any = simpleGroup.map((item:any) => {
+            let level2Selected = item.isSelected;
+            if(typeNum==1 && level2Selected == 'y'){
+                return {
+                    ...item,
+                    mobile1Selected: 'y',
+                    mobile2Selected: 'n',
+                    mobile3Selected: 'n',
+                };
+            }else if(typeNum==2 && level2Selected == 'y'){
+                return {
+                    ...item,
+                    mobile1Selected: 'n',
+                    mobile2Selected: 'y',
+                    mobile3Selected: 'n',
+                };
+            }else if(typeNum==3 && level2Selected == 'y'){
+                return {
+                    ...item,
+                    mobile1Selected: 'n',
+                    mobile2Selected: 'n',
+                    mobile3Selected: 'y',
+                };
+            }
+                 
+            return item;
+        });
+        setSimpleGroup(updatedDataArr);   
         
     }
   
@@ -1148,7 +1228,6 @@ export const SendWrite = () =>{
         setQrUrl(text);
     }
     
-
 
     //권한요청
     const requestPermission = async () => {
@@ -1177,7 +1256,7 @@ export const SendWrite = () =>{
     async function selectImage(){
         setIsShowFileBtns(false);
 
-        const maxImageCount = pageKor=='공지사항'?1:3;
+        const maxImageCount = pageKor=='공지사항'?1:5;
 
         if(selectedImgCount>=maxImageCount){
             Alert.alert('안내', `이미지는 최대 ${maxImageCount}개까지 선택 가능합니다.`);		
@@ -1223,7 +1302,7 @@ export const SendWrite = () =>{
     async function selectFiles(){
         setIsShowFileBtns(false);
 
-        const maxFileCount = pageKor=='공지사항'?1:3;
+        const maxFileCount = pageKor=='공지사항'?1:5;
 
         if(selectedFileCount>=maxFileCount){
             Alert.alert('안내', `파일은 최대 ${maxFileCount}개까지 선택 가능합니다.`);		
@@ -1281,9 +1360,23 @@ export const SendWrite = () =>{
         },100);
     }
 
+    function showDirectPhoneInputModal(){
+        setIsShowDirectPhoneInput(true);
+        setIsShowReceiveBtns(false);
+
+        setTimeout(()=>{
+            directPhoneInputRef.current.focus();
+        },100);
+        
+    }
+
     function onChangeSurveyWrite(text:string){
         setSurveyInputTxt(text);
     }
+    function onChangeDirectPhoneInput(text:string){
+        setDirectPhoneNumber(text);
+    }
+
 
     function onSubmitSurveyWrite(){
         setIsShowSurveyWriteInput(false);
@@ -1294,6 +1387,25 @@ export const SendWrite = () =>{
             currentWriteSurveyAnsArr[writeSurveyInputType] = surveyInputTxt;
         }
     }
+
+    function onSubmitDirectPhoneInput(){
+        // setIsShowDirectPhoneInput(false);
+        // setDirectPhoneNumber('');
+        // const isAppMember = isDirectPhoneAppMember(directPhoneNumber, appMemberPhone);
+        // console.log(isAppMember);
+
+        const tempArr = getDirectPhoneSendAddrInfo(directPhoneNumber, simpleStuAndPar, simpleTeacher, simpleGroup);
+       
+        const directPhoneInputFinalTemp = [...directPhoneInputFinal, ...tempArr];
+        setDirectPhoneInputFinal(directPhoneInputFinalTemp);
+        const totalTempArr = [...directPhoneInputFinalTemp, ...simpleAddrFinal, ...addBookAddrFinal];
+
+        prepareFinalTotalData(totalTempArr);
+    
+        closeDirectInputModal();
+    }
+
+    
 
    
 
@@ -1453,7 +1565,12 @@ export const SendWrite = () =>{
         }else{
             openFinalSendModal();
         }
-      
+    }
+
+    function closeDirectInputModal(){
+        setIsShowDirectPhoneInput(false); 
+        setDirectPhoneNumber('');
+        Keyboard.dismiss();
     }
 
 
@@ -1618,7 +1735,6 @@ export const SendWrite = () =>{
 
 
          //텍스트 데이터
-         sendData.pageName = page;
          sendData.pageName = page;
          sendData.subject = subject;
          sendData.message = content;
@@ -1965,7 +2081,7 @@ export const SendWrite = () =>{
                             borderRadius:10, 
                             backgroundColor:'#FFF',
                             width:95,
-                            height:90,
+                            height:125,
                         }}	
                         distance={6} 
                         startColor={'rgba(193, 193, 193, 0.4)'} 
@@ -1977,6 +2093,9 @@ export const SendWrite = () =>{
                     </ReceiveBtnPress>
                     <ReceiveBtnPress onPress={openAddBookModal}>
                         <ReceiveBtnTxt style={{marginTop:-3}}>주소록</ReceiveBtnTxt>
+                    </ReceiveBtnPress>
+                    <ReceiveBtnPress onPress={showDirectPhoneInputModal}>
+                        <ReceiveBtnTxt style={{marginTop:-20}}>직접입력</ReceiveBtnTxt>
                     </ReceiveBtnPress>
                     </Shadow>
                 </ReceiveBtnView>
@@ -2015,12 +2134,10 @@ export const SendWrite = () =>{
         </ScrollView>			
         </SafeBasicView>
 
-        
-
 
         
-
-        {isShowSimpleSelectModal &&  //수신자 간편 선택 모달
+        {/* 수신자 간편 선택 모달 */}
+        {isShowSimpleSelectModal && 
         <SendWriteBottom_SimpleSelect 
             aniBoxPositionY={aniBoxPositionY}
             closeSimpleReveiceModal={closeSimpleReveiceModal}
@@ -2028,8 +2145,8 @@ export const SendWrite = () =>{
         />
         }
 
-
-         {isShowAddBook &&  // 수신자 주소록 선택 모달
+        {/* 수신자 주소록 선택 모달 */}
+        {isShowAddBook && 
         <SendWriteBottom_AddrBookSelect 
             aniBoxPositionY={aniBoxPositionY}
             closeAddBookModal={closeAddBookModal}
@@ -2037,7 +2154,9 @@ export const SendWrite = () =>{
             addBookCate={addBookCate}
             setAddBookCate={setAddBookCate}
             changeMobileType={changeMobileType}
+            changeMobileTypeGroup = {changeMobileTypeGroup}
             selPhoneType={selPhoneType}
+            selGroupPhoneType={selGroupPhoneType}
             toggleGradeSelect={toggleGradeSelect}
             gradeArr={gradeArr}
             toggleGrade={toggleGrade}
@@ -2059,12 +2178,15 @@ export const SendWrite = () =>{
             simpleGroup={simpleGroup}
             toggleGroupSelect={toggleGroupSelect}
             toggleGroup={toggleGroup}
-            toggleMobileSelect_group={toggleMobileSelect_group}
+            toggleGroupLv2 = {toggleGroupLv2}
+            toggleMobileSelect_group = {toggleMobileSelect_group}
+            toggleMobileTypeSelect_group = {toggleMobileTypeSelect_group}
             
         />
         }
 
-        {isShowSurveyStartModal &&  //설문지 질문 타입 선택 모달 (설문 1차 모달)
+        {/* 설문지 질문 타입 선택 모달 (설문 1차 모달) */}
+        {isShowSurveyStartModal &&  
         <SendWriteBottom_SurveyStart 
             aniBoxPositionY={aniBoxPositionY}
             closeSurveyStartModal={closeSurveyStartModalFast}
@@ -2079,8 +2201,8 @@ export const SendWrite = () =>{
         />
         }   
 
-        
-        {isShowSurveyTypeModal &&  //객관식 주관식 타입 선택 모달 (설문 2차 모달)
+        {/* 객관식 주관식 타입 선택 모달 (설문 2차 모달) */}
+        {isShowSurveyTypeModal &&  
         <SendWriteBottom_SurveyType 
             aniBoxPositionY={aniBoxPositionY}
             setQtypeData={setQtypeData}
@@ -2088,15 +2210,17 @@ export const SendWrite = () =>{
         />
         }
 
-        {isShowSurveyDoubleAnswerModal &&  // 중복답변 가능여부 선택 모달
+        {/* 중복답변 가능여부 선택 모달 */}
+        {isShowSurveyDoubleAnswerModal &&  
         <SendWriteBottom_SurveyDoubleAnswer
             aniBoxPositionY={aniBoxPositionY}
             setIsDoubleAnswerData={setIsDoubleAnswerData}
             isDoubleAnswer={isDoubleAnswer}
         />
         }
-
-        {isShowSurveyDoubleCountModal &&  // 중복답변 갯수 선택 모달
+        
+        {/* 중복답변 갯수 선택 모달 */}
+        {isShowSurveyDoubleCountModal && 
         <SendWriteBottom_SurveyDoubleCount
             aniBoxPositionY={aniBoxPositionY}
             setDoubleCountData={setDoubleCountData}
@@ -2104,8 +2228,8 @@ export const SendWrite = () =>{
         />
         }
 
-
-        {isShowSurveyWriteModal && // 설문지 질문 작성 모달 
+        {/* 설문지 질문 작성 모달  */}
+        {isShowSurveyWriteModal && 
         <SendWriteBottom_SurveyWrite 
             aniBoxPositionY={aniBoxPositionY}
             closeSurveyWriteModal={closeSurveyWriteModal}
@@ -2128,7 +2252,7 @@ export const SendWrite = () =>{
         />
         }
 
-
+        {/* 최종 발신 선택 모달 */}
         {isShowFinalSendModal  &&
         <SendWriteBottom_FinalSend 
            aniBoxPositionY={aniBoxPositionY}
@@ -2184,8 +2308,18 @@ export const SendWrite = () =>{
                 }}
             >
                 {simplePickerArr.map((item:any, idx)=>{
+                    const {value, txt, count, mobileType} = item;
+                    let subTxt = '전체';
+                    if(mobileType==='mobile1'){
+                        subTxt = '휴대폰번호1 전체';
+                    }else if(mobileType==='mobile2'){
+                        subTxt = '휴대폰번호2 전체';
+                    }else if(mobileType==='mobile3'){
+                        subTxt = '휴대폰번호3 전체';
+                    }
+                    
                     return(
-                        <Picker.Item key={'picker_'+idx} label={item.value=='none'?`${item.txt}`:`${item.txt} 전체(${item.count}명)`} value={item.value} />
+                        <Picker.Item key={'picker_'+idx} label={value=='none'?`${txt}`:`${txt} ${subTxt}(${count}명)`} value={value} />
                     )
                 })}
                 
@@ -2361,6 +2495,7 @@ export const SendWrite = () =>{
                                 if(item.mobileType=="mobile1"){typeTxt+="학생번호"}
                                 else if(item.mobileType=="mobile2"){typeTxt+="학부모번호1"}
                                 else if(item.mobileType=="mobile3"){typeTxt+="학부모번호2"}
+                               
                             }else if(item.kind =='t'){
                                 let category1Kor = item.category1.length==0?'부서없음':item.category1;
                                 infoTxt = `${category1Kor} ${item.name} - ${item.mobile}`;
@@ -2368,16 +2503,19 @@ export const SendWrite = () =>{
                             }else if(item.type =='group'){
                                 let mobileNumType = "";
                                 if(item.mobileType=='mobile1'){
-                                    mobileNumType ="(휴대폰번호)"; 
+                                    mobileNumType ="(휴대폰번호1)"; 
                                 }else if(item.mobileType=='mobile2'){
-                                    mobileNumType ="(휴대폰번호1)";
-                                }else if(item.mobileType=='mobile3'){
                                     mobileNumType ="(휴대폰번호2)";
+                                }else if(item.mobileType=='mobile3'){
+                                    mobileNumType ="(휴대폰번호3)";
                                 }else if(item.mobileType=='tel'){
                                     mobileNumType ="(전화번호)";
                                 }
                                 infoTxt = `${item.name} - ${item.mobile} ${mobileNumType}`;
                                 typeTxt = item.groupName;
+                            }else if(item.name == '직접입력'){
+                                typeTxt+="직접입력"
+                                infoTxt = `${item.mobile}`;
                             }
 
                             return(
@@ -2406,7 +2544,30 @@ export const SendWrite = () =>{
         }
 
 
+        {isShowDirectPhoneInput &&
 
+        <SurveyInputView>
+            <SurveyInputBox>
+                <SurveyInputBoxTxt>전화번호를 입력해 주세요.</SurveyInputBoxTxt>
+                <SurveyInput
+                    placeholderTextColor={colors.placeholder}
+                    style={{textAlignVertical:'top'}}	
+                    maxLength ={50}
+                    keyboardType={os==='ios'?"numbers-and-punctuation":"numeric"}
+                    ref = {directPhoneInputRef}
+                    onChangeText={onChangeDirectPhoneInput} 
+                    onSubmitEditing={onSubmitDirectPhoneInput}
+                    value={directPhoneNumber}
+                />
+                <SurveyInputClosePress 
+                    onPress={closeDirectInputModal}
+                >
+                    <Ionicons name="close-outline" size={18} color={colors.placeholder} />
+                </SurveyInputClosePress>
+            </SurveyInputBox>
+        </SurveyInputView>
+
+        }
 
 
 

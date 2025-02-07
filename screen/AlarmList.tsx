@@ -59,8 +59,6 @@ export const AlarmList = () =>{
     let user_id = useSelector((state:any)=>state.user.user_id);
 
     async function getData(){
-        
-        
         const data = await getAlarmList('notice', 'all', user_id);
         setListData(data);
 
@@ -78,9 +76,6 @@ export const AlarmList = () =>{
         getData();
 
     },[]);
-
-
-    
 
     const selectStudent = (name:any, school_name:any) =>{
         setSelectedStudent(name);

@@ -7,12 +7,12 @@ import { BasicScrollView, HeaderSpaceForAndroid, PaddingView, SafeBasicView, Spa
 import { Ionicons } from '@expo/vector-icons'; 
 import colors from "../common/commonColors";
 import { getWindowWidth } from "../common/commonFunc";
-import { UnReadBox } from "../components/UnReadBox";
 
 import { checkNotifications, PERMISSIONS, RESULTS, requestNotifications, request } from 'react-native-permissions';
-import { getUnreadData } from "../common/commonData";
 import { Loader } from "../components/Loader";
 import { useAppDispatch } from "../store";
+import { KakaoBtn } from "../components/KakaoBtn";
+import { HomeUnread } from "../components/HomeUnread";
 
 
 const os = Platform.OS;
@@ -27,15 +27,14 @@ const HomeLogo = styled.Image`
 const SettingPress = styled.Pressable`
     width:50px; height:50px;justify-content: center; align-items: flex-end; justify-content: center; padding-top: 8px;
 `
+
 const WelcomeView = styled.View`
     width:100%; height:200px; background-color: ${colors.mainGreen}; border-radius: 10px;
 `
 const WelcoleTxt1 = styled.Text`
     font-family: 'noto400'; font-size: 20px; line-height: 25px; color:#FFFFFF; margin: 30px 0 0 22px; letter-spacing: -0.8px;
 `
-const UnReadView = styled.View`
-    flex-direction: row;
-`
+
 
 const SearchView = styled.View`
     width:100%; height:140px; background-color: #E5E9FD; border-radius: 10px; padding:25px;
@@ -68,11 +67,7 @@ export const Home = () =>{
     const dispatch = useAppDispatch();
     const navigation:any = useNavigation();
 
-    const [unreadNotice, setUnreadNotice] = useState<any>('');
-    const [unreadLetter, setUnreadLetter] = useState<any>('');
-    const [unreadSurvey, setUnreadSurvey] = useState<any>('');
-
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [searchWord, setSearchWord] = useState('');
     const serialInputRef:any = useRef(null);
@@ -80,28 +75,28 @@ export const Home = () =>{
     const isFocused = useIsFocused();
 
 
-    async function getData(){
-        const data = await getUnreadData();
+    // async function getData(){
+    //     const data = await getUnreadData();
 
-        let noticeCount:number = 0;
-        let letterCount:number = 0;
-        let surveyCount:number = 0;
+    //     let noticeCount:number = 0;
+    //     let letterCount:number = 0;
+    //     let surveyCount:number = 0;
 
-        data?.forEach(({category, unreadCount}:any)=>{
-            if(category==='notice'){  noticeCount+=unreadCount;  }
-            if(category==='letter'){  letterCount+=unreadCount;  }
-            if(category==='survey'){  surveyCount+=unreadCount;  }
-        })
-        setUnreadNotice(noticeCount);
-        setUnreadLetter(letterCount);
-        setUnreadSurvey(surveyCount);
+    //     data?.forEach(({category, unreadCount}:any)=>{
+    //         if(category==='notice'){  noticeCount+=unreadCount;  }
+    //         if(category==='letter'){  letterCount+=unreadCount;  }
+    //         if(category==='survey'){  surveyCount+=unreadCount;  }
+    //     })
+    //     setUnreadNotice(noticeCount);
+    //     setUnreadLetter(letterCount);
+    //     setUnreadSurvey(surveyCount);
 
-        setIsLoading(false);
-    } 
+    //     setIsLoading(false);
+    // } 
 
-    useEffect(()=>{
-        getData();
-    },[isFocused]);
+    // useEffect(()=>{
+    //     getData();
+    // },[isFocused]);
  
 
 
@@ -130,6 +125,7 @@ export const Home = () =>{
 
 
 
+
     if(isLoading){
         return <Loader />
     }
@@ -155,28 +151,11 @@ export const Home = () =>{
                     <Space height={20}/>
 
                     <WelcomeView>
-                        <WelcoleTxt1>{unreadNotice+unreadLetter+unreadSurvey ==0?`읽지 않은 수신내역이 없습니다!`:`아직 읽지 않았어요!`}</WelcoleTxt1>
-
+                        <WelcoleTxt1>아직 읽지 않았어요!</WelcoleTxt1>
                         <Space height={20}/>
-
-                        <UnReadView>
-                            <UnReadBox 
-                                goFunc={goUnreadAlarm} 
-                                txt1 = {'알림장'}
-                                txt2 = {`${unreadNotice}건`}
-                            />
-                            <UnReadBox 
-                                goFunc={goUnreadAlarm} 
-                                txt1 = {"가정통신문"}
-                                txt2 = {`${unreadLetter}건`}
-                            />
-                             <UnReadBox 
-                                goFunc={goUnreadAlarm} 
-                                txt1 = {'설문조사'}
-                                txt2 = {`${unreadSurvey}건`}
-                            />
-                        </UnReadView>
+                        <HomeUnread isFocused={isFocused} from={'home'}/>
                     </WelcomeView>
+
 
                     <Space height={30}/>
 
@@ -245,6 +224,8 @@ export const Home = () =>{
                     </MainMenuView>
                 </PaddingView>
             </BasicScrollView>
+
+            <KakaoBtn />
         </SafeBasicView>
     )
 

@@ -2,20 +2,18 @@ import react, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { HeaderSpaceForAndroid, PaddingView, SafeBasicView, Space } from "../common/commonStyled";
 import colors from "../common/commonColors";
-import { UnReadBox } from "../components/UnReadBox";
-import { goAgreement, goCompanyInfo, goPrivacy, goSendList, goSendMain, goUnreadAlarm } from "../common/commonNaviFunc";
+import { goAgreement, goCompanyInfo, goPrivacy, goSendList } from "../common/commonNaviFunc";
 import { getWindowHeight } from "../common/commonFunc";
 import { Entypo, Ionicons } from '@expo/vector-icons'; 
-import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useAppDispatch } from "../store";
-import { useQuery } from "react-query";
 import * as commonData from "../common/commonData";
 import { Loader } from "../components/Loader";
 import { logoutCheck } from "../common/commonExportFunc";
 import React from "react";
-import { AppState } from "react-native";
 import { useSelector } from "react-redux";
-
+import { KakaoBtn } from "../components/KakaoBtn";
+import { HomeUnread } from "../components/HomeUnread";
 
 const windowHeight = getWindowHeight();
 
@@ -24,6 +22,7 @@ const MyScrollView = styled.ScrollView`
 `
 const MyHeadView = styled.View`
     width:100%; background-color: ${colors.mainGreen}; padding-bottom: 25px; border-bottom-left-radius:20px ; border-bottom-right-radius:20px ;
+    height:200px;
 `
 const MyHeadViewBack = styled.View`
     background-color: #FFFFFF;
@@ -33,9 +32,6 @@ const HeadTxt1 = styled.Text`
 `
 const HeadTxt2 = styled(HeadTxt1)`
      font-size: 14px; 
-`
-const UnReadView = styled.View`
-    flex-direction: row; margin-top: 40px;
 `
 const MyTitleTxt = styled.Text`
     font-family: 'noto700'; font-size: 18px; line-height:21px; color:${colors.textBlack};
@@ -83,10 +79,6 @@ export const Mypage = () =>{
     const isFocused = useIsFocused();
 
     const [userData, setUserData] = useState<any>([]);
-
-    const [unreadNotice, setUnreadNotice] = useState<any>('');
-    const [unreadLetter, setUnreadLetter] = useState<any>('');
-    const [unreadSurvey, setUnreadSurvey] = useState<any>('');
     const [isLoading, setIsLoading] = useState(true);
 
     const isUser = useSelector((state:any)=>state.user.isUser);
@@ -99,24 +91,6 @@ export const Mypage = () =>{
         isSender = true;
     }
 
-    async function loadUnreadData(){
-        let data = await commonData.getUnreadData();
-        let noticeCount:number = 0;
-        let letterCount:number = 0;
-        let surveyCount:number = 0;
-
-        data.forEach(({category, unreadCount}:any)=>{
-            if(category==='notice'){  noticeCount+=unreadCount;  }
-            if(category==='letter'){  letterCount+=unreadCount;  }
-            if(category==='survey'){  surveyCount+=unreadCount;  }
-            
-        });
-        setUnreadNotice(noticeCount);
-        setUnreadLetter(letterCount);
-        setUnreadSurvey(surveyCount);
-
-    }
-
     async function getData(){
         const data = await commonData.getMypageInfo();
         setUserData(data);
@@ -125,9 +99,7 @@ export const Mypage = () =>{
 
     useEffect(()=>{
         getData();
-        loadUnreadData();
     },[isFocused]);
-
 
 
     if(isLoading){
@@ -165,28 +137,10 @@ export const Mypage = () =>{
         <SafeBasicView  style={{backgroundColor:colors.mainGreen}}>
             <HeaderSpaceForAndroid style={{backgroundColor:colors.mainGreen}}/>
             <MyHeadViewBack>
-            <MyHeadView>
-                <HeadTxt1>{displayName}<HeadTxt2> {displayName2}</HeadTxt2></HeadTxt1>
-
-                <UnReadView>
-                    <UnReadBox 
-                        goFunc={goUnreadAlarm} 
-                        txt1 = {'알림장'}
-                        txt2 = {`${unreadNotice}건`}
-                    />
-                    <UnReadBox 
-                        goFunc={goUnreadAlarm} 
-                        txt1 = {'가정통신문'}
-                        txt2 = {`${unreadLetter}건`}
-                    />
-                        <UnReadBox 
-                        goFunc={goUnreadAlarm} 
-                        txt1 = {'설문조사'}
-                        txt2 = {`${unreadSurvey}건`}
-                    />
-                </UnReadView>
-
-            </MyHeadView>
+                <MyHeadView>
+                    <HeadTxt1>{displayName}<HeadTxt2> {displayName2}</HeadTxt2></HeadTxt1>
+                    <HomeUnread isFocused={isFocused} from={'mypage'}/>
+                </MyHeadView>
             </MyHeadViewBack>
 
             <MyScrollView>
@@ -276,6 +230,7 @@ export const Mypage = () =>{
                     </LogoutBox>
                 </PaddingView>
             </MyScrollView>
+            <KakaoBtn />
         </SafeBasicView>
     )
 }
