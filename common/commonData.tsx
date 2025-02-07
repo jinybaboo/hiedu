@@ -3,9 +3,9 @@ import axios from 'axios'
 import { getTodayAsYYYYMMDD } from './commonFunc';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-let serverUrl = `http://172.30.1.7:663`;
-serverUrl = `http://192.168.0.153:663`;
-// const serverUrl = `https://app.hiedu.kr`; 
+// let serverUrl = `http://172.30.1.7:663`;
+// serverUrl = `http://192.168.0.153:663`;
+const serverUrl = `https://app.hiedu.kr`; 
 
 export const getLunchInfo = async (ATPT_OFCDC_SC_CODE:string, SD_SCHUL_CODE:string) => {  
     const today = getTodayAsYYYYMMDD();
