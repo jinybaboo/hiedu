@@ -12,7 +12,7 @@ import { Platform } from "react-native";
 import { goLoginAgree } from "../common/commonNaviFunc";
 import styled from "styled-components/native";
 import { useEffect, useState } from "react";
-import { getAuth, getBoardList, getMypageInfo } from "../common/commonData";
+import { getAuth, getBoardList, getMypageInfo, getUserServiceMessenger } from "../common/commonData";
 import { getBoardNew } from "../common/commonFunc";
 import { SendMain } from "../screen/SendMain";
 import { useAppDispatch } from "../store";
@@ -20,6 +20,7 @@ import userSlice from "../slices/user";
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
+
     const navigation = useNavigation();
     const os = Platform.OS;
     const iconSize = 24;
@@ -27,25 +28,39 @@ const Tabs = () => {
 
     const dispatch = useAppDispatch();
 
-  
     const isLogin = useSelector((state:RootState)=>state.user.isLogin);
     const member_id = useSelector((state:any)=>state.user.member_id);
     const isUser = useSelector((state:RootState)=>state.user.isUser);
     const auth:any = useSelector((state:RootState)=>state.user.auth);
+    const user_id = useSelector((state:any)=>state.user.user_id);
 
 
-    let isSender = false;
-    if(isUser>0){
-        isSender = true;
+    async function getServiceData (){
+        if(isUser>0){
+            setIsSender(true);
+        }
+        if(auth!=null && auth.includes('send_sms')){
+            setIsSender(true);
+        }
+        const {messengerCount} = await getUserServiceMessenger(user_id);
+        
+        if(messengerCount==0){
+            setIsSender(false);
+        }
+
     }
-    if(auth!=null && auth.includes('send_sms')){
-        isSender = true;
-    }
+
+    const [isSender, setIsSender] = useState<any>(false);
+    useEffect(()=>{
+        getServiceData();
+    },[]);
+
+   
+    
 
     const [hasNewBoard, setHasNewBoard] = useState(false);
-
     const isFocused = useIsFocused();
-
+    
     if(!isLogin){
         goLoginAgree(navigation);
     }
@@ -74,7 +89,6 @@ const Tabs = () => {
 
 
     // 탭 네비게이션 시 auth 재설정 하기 
-    
     async function setAuthData(){
         const {auth} = await getAuth(isUser, member_id);
         dispatch(userSlice.actions.setAuth(auth));

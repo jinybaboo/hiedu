@@ -58,22 +58,28 @@ export const AlarmList = () =>{
 
     let user_id = useSelector((state:any)=>state.user.user_id);
 
+
     async function getData(){
         const data = await getAlarmList('notice', 'all', user_id);
         setListData(data);
+        
 
         //상단 필터용 데이터 만들기
         const receiveListData = removeDuplicateJsonArrData(data, 'name');
 
         let reveiveListTemp = [{name:'전체', school_name:""}];
-        receiveListData?.forEach(({name, school_name}:any)=>{ reveiveListTemp.push({name, school_name});});
+
+        receiveListData?.forEach(({name, school_name}:any)=>{ 
+            reveiveListTemp.push({name, school_name});
+        });
+
         setReceiveList(reveiveListTemp);
 
         setIsLoading(false);
     }
 
     useEffect(()=>{
-        getData();
+        getData(); 
 
     },[]);
 
@@ -133,6 +139,7 @@ export const AlarmList = () =>{
 
 
     const dataLength = listData?.length;
+    
 
     if(isLoading){return <Loader/>}
 

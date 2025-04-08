@@ -10,6 +10,9 @@ import { HeaderCustom } from "../components/HeaderCustom";
 import { Alert, BackHandler } from "react-native";
 import { getAdminInfo } from "../common/commonData";
 
+import AntDesign from '@expo/vector-icons/AntDesign';
+
+
 
 const TopTextBox = styled.View`
     width:100%; height:40px; justify-content: center;
@@ -57,13 +60,12 @@ export const LoginAgree = () =>{
     const [isChecked1, setIsChecked1] = useState(false);
     const [isChecked2, setIsChecked2] = useState(false);
 
-    async function getData(){ 
-        await getAdminInfo(); 
-        
-    }
+    // async function getData(){ 
+    //     await getAdminInfo(); 
+    // }
 
     useEffect(()=>{
-        getData() 
+        // getData()
 
         const backAction = () => {
             return true; 
@@ -77,13 +79,12 @@ export const LoginAgree = () =>{
 
     function checkAgreement(){
         if(!isChecked1 || !isChecked2){
-            Alert.alert('안내','이용약관 및 개인정보처리방침에 동의해 주세요.')
+            Alert.alert('안내','이용약관 및 개인정보처리방침에 동의해 주세요.');
         }else{
-            goLoginAgree2(navigation)
+            goLoginAgree2(navigation);
         }
     }
  
-
 
     return (
         <SafeBasicView>
@@ -97,7 +98,7 @@ export const LoginAgree = () =>{
                 </ProcessNumBox>
 
                 <AgreeText1>이용약관에{'\n'}동의해주세요.</AgreeText1>
-
+                
                 <AgreeText2>서비스 이용을 위한 필수 동의사항</AgreeText2>
                 <Space height={20} />
                 <GrayInputBox>

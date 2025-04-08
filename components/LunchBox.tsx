@@ -8,10 +8,10 @@ import { changeYYYYMMDDToMMDD_Day, getTodayAsYYYYMMDD, getWindowWidth, replaceAl
 const windowWidth = getWindowWidth();
 
 const ListView = styled.View`
-    margin-left: 20px; margin-top: 15px; margin-bottom: 20px; 
+    margin-left: 20px; margin-top: 15px; margin-bottom: 20px;
 `
 const LunchView = styled.View`
-    width:${windowWidth-40}px; padding:30px 20px 10px;
+    width:${windowWidth-40}px; padding:30px 20px 10px; 
 `
 const LunchHeadView = styled.View`
     flex-direction: row; justify-content: space-between;

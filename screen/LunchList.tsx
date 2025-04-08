@@ -39,9 +39,12 @@ export const LunchList = () =>{
         let data = await getMypageInfo();
         let myInfo = getMyInfoDataForBottomSelect(data);
 
+        console.log(myInfo);
+        
+
         // 등록된 정보의 학교 코드 가져오기
         let schoolCodeArr = await getMySchoolCodeInfo(myInfo)
-        
+
         //등록된 학교 코드가 없으면 수신 myInfo 에서 제거
         myInfo = myInfo.filter((item:any)=>{
             const {name, school_name} = item;
@@ -60,6 +63,7 @@ export const LunchList = () =>{
         //급식은 학교 단위 이므로 중복된 학교 코드는 myInfo에서 제거
         myInfo = removeDuplicateJsonArrData(myInfo, 'school_name');
         setStudentList(myInfo);
+
         
         let dataTemp:any = [];
         for(let i =0; i<schoolCodeArr.length; i++){
@@ -167,7 +171,7 @@ export const LunchList = () =>{
                         <Space height={50}/>
                     )}
                 />
-           </>
+            </>
            }
         </SafeBasicView>
             

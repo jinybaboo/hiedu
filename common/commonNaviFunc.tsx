@@ -13,7 +13,7 @@ export const goMypage           = (navigation:any) => {navigation.navigate('Tabs
 
 //스택 메뉴
 export const goNotification     = (navigation:any) => {navigation.navigate('Stack', {screen: 'Notification', params:{}});}
-export const goLoginAgree       = (navigation:any) => {navigation.navigate('Stack', {screen: 'LoginAgree', params:{}});}
+export const goLoginAgree       = (navigation:any) => {navigation.navigate('Stack', {screen: '010', params:{}});}
 export const goLoginAgree2      = (navigation:any) => {navigation.navigate('Stack', {screen: 'LoginAgree2', params:{}});}
 export const goAgreement        = (navigation:any) => {navigation.navigate('Stack', {screen: 'Agreement', params:{}});}
 export const goPrivacy          = (navigation:any) => {navigation.navigate('Stack', {screen: 'Privacy', params:{}});}

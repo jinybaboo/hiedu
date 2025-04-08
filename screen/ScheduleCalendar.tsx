@@ -89,7 +89,6 @@ export const ScheduleCalendar = () =>{
             }
         }
 
-        
         setListData(dataTemp);
         prepareData(dataTemp);
 
@@ -119,6 +118,7 @@ export const ScheduleCalendar = () =>{
             const {marked, EVENT_NM, SCHUL_NM} = value;
             tempObj[key] = {marked, selected:false, EVENT_NM, SCHUL_NM}
         });
+
         
         //선택한 날짜의 selected를 true로 만들어줌.
         if(tempObj[dateString]!==undefined && tempObj[dateString].EVENT_NM != undefined){
@@ -197,9 +197,6 @@ export const ScheduleCalendar = () =>{
                 <HeaderCustom title={"학사 일정"}/>
                 <Space height={6}/>
             </>
-            {false ?
-            <UnreadComp text={'학사일정 데이터가 없습니다.'}/>
-            : 
             <>
                 <PaddingView>
                 {studentList.length > 2 &&
@@ -236,7 +233,6 @@ export const ScheduleCalendar = () =>{
                     
                 </>
            </>
-           }
         </SafeBasicView>
             
         {isShowBottomModal &&

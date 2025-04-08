@@ -165,6 +165,7 @@ export const SendList = () =>{
 
     
     function onRefresh(){
+        setShowInnerLoader(true);
         updateData();
     }
 
@@ -193,6 +194,7 @@ export const SendList = () =>{
         
         setIsLoading(true);
         setIsShowDatePicker(false);
+        
         if(dateKind==='startDate'){
             setStartDate(selectedDate);
         }else{
@@ -240,7 +242,7 @@ export const SendList = () =>{
                 </HeaderPress>
 
                 <HeaderTxt></HeaderTxt>
-                <RefreshPress onPress={()=>{onRefresh(); setShowInnerLoader(true);}}>
+                <RefreshPress onPress={()=>{onRefresh()}}>
                     <Ionicons name="reload" size={18} color="black" />
                 </RefreshPress>
 

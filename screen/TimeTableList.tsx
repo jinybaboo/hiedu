@@ -97,7 +97,8 @@ export const TimeTableList = () =>{
             }
             return hasSchool;
         });
-
+        console.log(myInfo);
+        
 
         //학생이 아닌데 category가 숫자가 아니면(담임이 아님) myInfo에서 제거
         myInfo = myInfo.filter((item:any)=>{
@@ -131,11 +132,12 @@ export const TimeTableList = () =>{
         const fiveDayLater = getDaysBeforeAsYYYYMMDD(-2);
         const twoMonLater = getMonthsLaterAsYYYYMMDD(2)
         const dataTemp = await getTimetableRawData(schoolCodeArr, myInfo, today, twoMonLater, fiveDayLater);
+        console.log(dataTemp);
+        
         
         const timeTableData:any = fixTimeTableData(dataTemp);
         
         setListData(timeTableData);
-        
         setIsLoading(false); 
 
     } 

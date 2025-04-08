@@ -182,7 +182,8 @@ export const Mypage = () =>{
                                <SendIcon>
                                     <Ionicons name="paper-plane-outline" size={23} color={colors.mainBlueOpa} />
                                     <SchoolTxt4>앱발송가능</SchoolTxt4>
-                                </SendIcon>}
+                                </SendIcon>
+                                }
                             </SchoolBox>
                         )
                     })}

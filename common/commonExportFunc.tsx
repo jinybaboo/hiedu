@@ -15,7 +15,9 @@ export const fixTimeTableData = (arr:any) =>{
         const tempArr:any = [];
 
         const dateArr = saperateArr.reduce((returnArr:any, item:any) =>{		
-            if( !tempArr.includes(item.ALL_TI_YMD)){returnArr.push(item.ALL_TI_YMD)}	
+            if(!tempArr.includes(item.ALL_TI_YMD)){
+                returnArr.push(item.ALL_TI_YMD)
+            }	
             tempArr.push(item.ALL_TI_YMD);												
             return returnArr;												
         },[]);	
@@ -68,7 +70,6 @@ export const saveSendUserAndMemberInfo = async (dispatch:any) => {
 
     const {auth} = await getAuth(isUser, member_id);
     dispatch(userSlice.actions.setAuth(auth));
-
 }
 
 export const logoutCheck = (dispatch:any, navigation:any) =>{

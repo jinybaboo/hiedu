@@ -1021,6 +1021,7 @@ export const SendWrite = () =>{
         //학생 부분
         let gradeArr = removeDuplicateJsonArrData(simpleStuAndPar, "category1");
         let classArr = removeDuplicateJsonArrData(simpleStuAndPar, "grade_class");
+
         
         //권한 설정
         gradeArr = filterAddBookStudentNoAuthClassTeacher(gradeArr, hasSelect_S, sendMemberInfo, 'grade');

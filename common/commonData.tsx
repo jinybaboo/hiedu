@@ -3,14 +3,16 @@ import axios from 'axios'
 import { getTodayAsYYYYMMDD } from './commonFunc';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-// let serverUrl = `http://172.30.1.7:663`;
-// serverUrl = `http://192.168.0.153:663`;
-const serverUrl = `https://app.hiedu.kr`; 
+let serverUrl = `https://app.hiedu.kr`; 
+serverUrl = `http://172.30.1.95:663`;
+// serverUrl = `http://localhost:663`;
+serverUrl = `http://192.168.0.18:663`;
 
 export const getLunchInfo = async (ATPT_OFCDC_SC_CODE:string, SD_SCHUL_CODE:string) => {  
     const today = getTodayAsYYYYMMDD();
     const {neisKey} = await getAdminInfo();
     const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${neisKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${SD_SCHUL_CODE}&MLSV_FROM_YMD=${today}`;
+    // const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${neisKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=7150085&MLSV_FROM_YMD=20240905`;
     try {
       const res = await axios.get(url);
       
@@ -126,8 +128,21 @@ export const getMypageInfo = async () => {
   }
 };
 
+export const getUserServiceMessenger = async (user_id:string) => {
+  const accessToken =  await EncryptedStorage.getItem('accessToken');
+  if(accessToken == undefined || accessToken == null){return null;}
+
+  const url = `${serverUrl}/getData/userServiceMessenger?user_id=${user_id}`;
+  try {
+    const {data} = await axios.get(url, {headers:{'Authorization': `Bearer ${accessToken}`, }});
+    
+    return data;
+  } catch (error) {
+    console.error('getUserServiceMessenger', error);
+  }
+};
+
 export const getAlarmList = async (category:string, isAll:string, user_id:string) => {
-  
   const accessToken =  await EncryptedStorage.getItem('accessToken');
   //isAll = 'all' : 전체, '' : 읽지 않은 것만.
   const url = `${serverUrl}/getData/alarmList?category=${category}&isAll=${isAll}&user_id=${user_id}`;
@@ -324,6 +339,7 @@ export const getSendMemberInfo = async (isUser:any, member_id:string) => {
 export const getAdminInfo = async () => {
   const accessToken =  await EncryptedStorage.getItem('accessToken');
   const url = `${serverUrl}/getData/adminInfo`;
+  
   if(accessToken==undefined || accessToken==null){
     return false;
   }
@@ -349,9 +365,6 @@ export const getAgreementInfo = async () => {
 }; 
 
 export const getSendList = async (isUser:string, portal_id:string, startDate:string, endDate:string) => {
-  console.log(startDate);
-  
-  
   const accessToken =  await EncryptedStorage.getItem('accessToken');
   const url = `${serverUrl}/getData/sendList?isUser=${isUser}&portal_id=${portal_id}&startDate=${startDate}&endDate=${endDate}`;
   try {
@@ -386,7 +399,7 @@ export const getResendData = async (umslog_id:string) => {
 
 export const getAuth = async (isUser:any, member_id:string) => {
   const accessToken =  await EncryptedStorage.getItem('accessToken');
-  if(accessToken===undefined){
+  if(accessToken===undefined || accessToken===null){
     return {};
   }
   

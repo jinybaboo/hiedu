@@ -71,7 +71,8 @@ export const BoardList = () =>{
         const schoolArr = data.reduce((returnArr:any, item:any) =>{								
             returnArr.push(item.schoolName)
             return returnArr;							
-        },[]);								
+        },[]);	
+        
 
         data = await getBoardList(schoolArr);
         setListData(data);

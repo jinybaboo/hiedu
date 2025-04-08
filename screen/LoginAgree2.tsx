@@ -146,6 +146,7 @@ export const LoginAgree2 = () =>{
     const checkGoHome = async () =>{
         setShowLoader(true);
         const fcmToken = await messaging().getToken();
+        
         if(isSerialConfirmed){
             const isNumExistInDB = await getIsExistAndSaveIfExist(phone, fcmToken);
             //서버 다녀와서 해당 번호가 있을경우 로그인 처리하기!
@@ -194,7 +195,7 @@ export const LoginAgree2 = () =>{
             clearInterval(timer);
           };
         }
-    }, [time, isRunning]);
+    }, [time, isRunning]);0
 
 
     useEffect( () => {    
@@ -222,8 +223,8 @@ export const LoginAgree2 = () =>{
             return;
         }
 
-        Keyboard.dismiss();
-        inActivePhoneSend();
+        Keyboard.dismiss(); //키보드 숨김
+        inActivePhoneSend(); // 휴대폰 번호 입력 기능 및 번호요청 버튼 비활성화
 
         //DB에 전화번호 없을시 인증문자 발송 거절
         const isNumExistInDB = await getIsPhoneExist(phone);
@@ -236,7 +237,7 @@ export const LoginAgree2 = () =>{
         }
 
         const randomNum = phone==='01012340000'?'000000': getRandomNum6();
-        setSerialSent(randomNum)
+        setSerialSent(randomNum);
 
         if(phone!==''){
             await sendSMS_Random6(randomNum, phone, ip);

@@ -72,6 +72,8 @@ export const HomeLetterList = () =>{
     const navigation:any = useNavigation();
 
     const selectedStudent:any = useSelector((state:any)=>state.user.selectedStudent);
+    console.log(selectedStudent);
+    
 
     // const [selectedStudent, setSelectedStudent] = useState("전체");
     const [selectedSchool, setSelectedSchool] = useState("");
@@ -87,12 +89,16 @@ export const HomeLetterList = () =>{
     async function getData(){
         const data = await getAlarmList('letter', 'all', user_id);
         setListData(data);
+
         
         const receiveListData = removeDuplicateJsonArrData(data, 'name');
         let reveiveListTemp = [{name:'전체', school_name:""}];
         receiveListData.forEach(({name, school_name}:any)=>{
             reveiveListTemp.push({name, school_name});
-        })
+        });
+
+        console.log(receiveListData);
+        
         setReceiveList(reveiveListTemp);
 
 
@@ -167,8 +173,9 @@ export const HomeLetterList = () =>{
         const yyyymm = insertDate.replace(".","").replace(" ","").substring(0,6);
         const {id, message, image} = data;
         const imageName = image?.split("^^")[0];
-        
+
         const imgUrl = fileUrl+imageName.toLowerCase();
+        
         return (
             <>
                 <HomeLetterBoxPress onPress={()=>{
@@ -179,7 +186,7 @@ export const HomeLetterList = () =>{
                     <HomeLetterTxt3 numberOfLines={1}>{data.subject}</HomeLetterTxt3>
                     {imageName!=''?
                     <HomeLetterImgBox>
-                        <HomeLetterImg 
+                        <HomeLetterImg
                             source={{uri:imgUrl}}
                             resizeMode ="contain"
                         />

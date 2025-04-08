@@ -45,21 +45,21 @@ export const SearchResult = () =>{
     const [searchData, setSerachData] = useState<any>();
     const [isLoading, setIsLoading] = useState(true);
 
-
     async function getData(){
        const data = await getAlarmSearch(searchWord);
+       
        setSerachData(data);
        setIsLoading(false);
     }
-
+    
     useEffect(()=>{
         getData();
     },[]);
-
+    
  
     if(isLoading){return <Loader />}
 
-    const renderItem = ({item, index}:any) => {		
+    const renderItem = ({item, index}:any) => {
         const {category, school_name, insert_date, id, name, subject, start_date} = item;
         const insertDate = getAlarmFullDate(insert_date);
         const yyyymm = insertDate.replace(".","").replace(" ","").substring(0,6);

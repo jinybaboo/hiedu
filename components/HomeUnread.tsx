@@ -7,6 +7,8 @@ import { goUnreadAlarm } from "../common/commonNaviFunc";
 import { Space } from "../common/commonStyled";
 import { getUnreadData } from "../common/commonData";
 import messaging from '@react-native-firebase/messaging';
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducer";
 
 
 
@@ -20,6 +22,7 @@ export const HomeUnread = ({isFocused, from}:any)=>{
     const UnReadView = styled.View`
         flex-direction: row; margin-top: ${from==='home'?0:40}px;
     `
+    const isLogin = useSelector((state:RootState)=>state.user.isLogin);
 
     async function getData(){
         setIsLoading(true);
@@ -42,9 +45,9 @@ export const HomeUnread = ({isFocused, from}:any)=>{
     } 
 
     useEffect(()=>{
-        getData();
+        isLogin && getData();
     },[isFocused]);
-
+ 
 
     useEffect(() => {
         //앱이 켜져있을때 푸시알람 수신시 데이터 리셋
@@ -69,7 +72,7 @@ export const HomeUnread = ({isFocused, from}:any)=>{
                 txt2 = {`${unreadLetter}건`}
                 isLoading = {isLoading}
             />
-                <UnReadBox 
+            <UnReadBox 
                 goFunc={goUnreadAlarm} 
                 txt1 = {'설문조사'}
                 txt2 = {`${unreadSurvey}건`}
