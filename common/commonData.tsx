@@ -4,9 +4,9 @@ import { getTodayAsYYYYMMDD } from './commonFunc';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 let serverUrl = `https://app.hiedu.kr`; 
-serverUrl = `http://172.30.1.95:663`;
-// serverUrl = `http://localhost:663`;
-serverUrl = `http://192.168.0.18:663`;
+// serverUrl = `http://172.30.1.95:663`;
+// // serverUrl = `http://localhost:663`;
+// serverUrl = `http://192.168.0.18:663`;
 
 export const getLunchInfo = async (ATPT_OFCDC_SC_CODE:string, SD_SCHUL_CODE:string) => {  
     const today = getTodayAsYYYYMMDD();
