@@ -5,7 +5,7 @@ import colors from "../common/commonColors";
 import { Alert, Animated, Keyboard, Platform, Pressable, View } from "react-native";
 import { formatTime, getRandomNum6 } from "../common/commonFunc";
 import { BlueBottomBtn } from "../components/BlueBottomBtn";
-import { goHome, goLoginAgree } from "../common/commonNaviFunc";
+import { goBack, goHome, goLoginAgree } from "../common/commonNaviFunc";
 import { useNavigation } from "@react-navigation/native";
 import { HeaderCustom } from "../components/HeaderCustom";
 import { useAppDispatch } from "../store";
@@ -141,6 +141,7 @@ export const LoginAgree2 = () =>{
 
     const goBackLogin = () => {
         closeBottomModal();
+        goBack(navigation);
     }
 
     const checkGoHome = async () =>{
@@ -195,7 +196,7 @@ export const LoginAgree2 = () =>{
             clearInterval(timer);
           };
         }
-    }, [time, isRunning]);0
+    }, [time, isRunning]);
 
 
     useEffect( () => {    
